@@ -115,11 +115,12 @@ export class Gamelogic {
         if (wall) return;
 
         if (this.isEmpty(nx, ny)) {
+            //empty => move
             this.level.playerSprite.move(nx, ny);
         } else {
             let crate = this.map.getSprite(nx, ny, LayerId.crate);
             if (crate) {
-                //try push
+                //crate => try push
                 let nnx = x + dx * 2;
                 let nny = y + dy * 2;
                 if (this.isEmpty(nnx, nny)) {
@@ -135,6 +136,23 @@ export class Gamelogic {
     }
 
     check() {
-        //TODO check each level target has crate
+        let levelDone = true;
+
+        //check each level target has crate
+        for (let targetMetal of this.level.targetMetal) {
+            let crate = this.map.getSprite(targetMetal.x, targetMetal.y, LayerId.crate);
+            let filled = crate && crate.asset === ImageAsset.crate_metal;
+            levelDone = levelDone && filled;
+            targetMetal.asset = filled ? ImageAsset.target_metal_2 : ImageAsset.target_metal_1;
+        }
+
+        for (let targetWood of this.level.targetWood) {
+            let crate = this.map.getSprite(targetWood.x, targetWood.y, LayerId.crate);
+            let filled = crate && crate.asset === ImageAsset.crate_wood;
+            levelDone = levelDone && filled;
+            targetWood.asset = filled ? ImageAsset.target_wood_2 : ImageAsset.target_wood_1;
+        }
+
+        console.log("levelDone", levelDone);
     }
 }

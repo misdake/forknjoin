@@ -5,7 +5,7 @@ export class Sprite {
 
     x: number;
     y: number;
-    readonly asset: ImageAsset;
+    asset: ImageAsset;
     readonly layer: Layer;
 
     constructor(asset: ImageAsset, layer: Layer) {

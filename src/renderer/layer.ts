@@ -56,6 +56,11 @@ export class Layer {
         return this.cells[x][y];
     }
 
+    is(x: number, y: number, asset: ImageAsset) {
+        let sprite = this.get(x, y);
+        return (!sprite && !asset) || (sprite.asset === asset);
+    }
+
     move(sprite: Sprite, newX: number, newY: number): boolean {
         if (newX < 0 || newX >= W) return null;
         if (newY < 0 || newY >= H) return null;
