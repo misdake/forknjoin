@@ -20,6 +20,8 @@ export class Game {
 
         this.gamelogic = new Gamelogic(this.map);
         this.gamelogic.load(0);
+
+        this.map.draw(this.canvas, this.context);
     }
 
     init() {
@@ -41,22 +43,6 @@ export class Game {
                 }
             }
         });
-
-        //wall
-        this.map.visitLayer(LayerId.wall, layer => {
-            for (let i = 0; i < W; i++) {
-                let asset = ImageAsset.wall;
-                layer.createSprite(i, 0, asset);
-                layer.createSprite(i, H - 1, asset);
-            }
-            for (let j = 1; j < H - 1; j++) {
-                let asset = ImageAsset.wall;
-                layer.createSprite(0, j, asset);
-                layer.createSprite(W - 1, j, asset);
-            }
-        });
-
-        this.map.draw(this.canvas, this.context);
     }
 
     update(action: Action, param?: any) {

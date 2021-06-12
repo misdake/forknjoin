@@ -1,6 +1,12 @@
 export enum ImageAsset {
     placeholder = "placeholder.png",
+
     player = "player.png",
+
+    crate_wood = "crate_wood.png",
+    crate_metal = "crate_metal.png",
+    target_wood = "target_wood.png",
+    target_metal = "target_metal.png",
 
     wall = "wall.png",
 
@@ -26,8 +32,7 @@ export enum Action {
 export enum LayerId {
     bg = 1,
     trace,
-    crate,
+    moveable,
     target,
-    player,
     wall
 }

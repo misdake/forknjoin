@@ -74,4 +74,11 @@ export class Layer {
 
         return true;
     }
+
+    clear() {
+        let entries = Array.from(this.set);
+        for (let entry of entries) {
+            this.deleteSprite(entry);
+        }
+    }
 }

@@ -1,46 +1,54 @@
-import P = LevelCell.P;
-import A = LevelCell.A;
-import B = LevelCell.B;
-import X = LevelCell.X;
-import Y = LevelCell.Y;
-import o = LevelCell.o;
-import W = LevelCell.W;
+import {ImageAsset, LayerId} from "./enums";
 
 export const levels: Level[] = [];
 
-namespace LevelCell {
-    export const P = 1; //player
+export const P = 1; //player
 
-    export const A = 2; //wood crate
-    export const B = 3; //metal crate
+export const A = 2; //wood crate
+export const B = 3; //metal crate
 
-    export const X = 2; //wood target
-    export const Y = 3; //metal target
+export const X = 4; //wood target
+export const Y = 5; //metal target
 
-    export const o = 4; //empty
-    export const W = 5; //wall
-}
+export const w = 6; //wall
+export const o = 7; //empty
+
+
+export const CELL_IMAGE_MAPPING: ImageAsset[] = [];
+CELL_IMAGE_MAPPING[P] = ImageAsset.player;
+CELL_IMAGE_MAPPING[A] = ImageAsset.crate_wood;
+CELL_IMAGE_MAPPING[B] = ImageAsset.crate_metal;
+CELL_IMAGE_MAPPING[X] = ImageAsset.target_wood;
+CELL_IMAGE_MAPPING[Y] = ImageAsset.target_metal;
+CELL_IMAGE_MAPPING[w] = ImageAsset.wall;
+export const CELL_LAYER_MAPPING: LayerId[] = [];
+CELL_LAYER_MAPPING[P] = LayerId.moveable;
+CELL_LAYER_MAPPING[A] = LayerId.moveable;
+CELL_LAYER_MAPPING[B] = LayerId.moveable;
+CELL_LAYER_MAPPING[X] = LayerId.target;
+CELL_LAYER_MAPPING[Y] = LayerId.target;
+CELL_LAYER_MAPPING[w] = LayerId.wall;
 
 export interface Level {
     forkMax: number;
 
-    map: number[][];
+    map: number[];
 }
 
 levels[0] = {
     forkMax: 0,
     map: [
-        [W, W, W, W, W, W, W, W, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, o, P, o, A, 0, X, o, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, o, o, o, o, o, o, o, W],
-        [W, W, W, W, W, W, W, W, W],
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, P, o, A, o, X, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, w, w, w, w, w, w, w, w,
     ],
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const ALL_CELL_TYPES = [P, A, B, X, Y, o, W];
+export const ALL_CELL_TYPES = [P, A, B, X, Y, o, w];
