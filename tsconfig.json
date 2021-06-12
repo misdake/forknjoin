@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "rootDir": "./src/",
+    "module": "CommonJS",
+    "target": "es2017",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "outDir": "./js/",
+    "moduleResolution": "node",
+    "types": [
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
