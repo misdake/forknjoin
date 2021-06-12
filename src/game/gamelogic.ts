@@ -11,6 +11,7 @@ class GameLevel {
     crateMetal: Sprite[];
     targetWood: Sprite[];
     targetMetal: Sprite[];
+    targetPlayer: Sprite[];
 }
 
 export class Gamelogic {
@@ -31,6 +32,7 @@ export class Gamelogic {
         this.level.crateMetal = [];
         this.level.targetWood = [];
         this.level.targetMetal = [];
+        this.level.targetPlayer = [];
 
         if (levelData.map.length !== W * H) {
             console.log("map size doesn't match!");
@@ -69,10 +71,15 @@ export class Gamelogic {
                         case ImageAsset.target_metal_1:
                             this.level.targetMetal.push(sprite);
                             break;
+                        case ImageAsset.target_player_1:
+                            this.level.targetPlayer.push(sprite);
+                            break;
                     }
                 }
             }
         }
+
+        this.check();
     }
 
     keyboard(action: Action, param: any) {
@@ -135,24 +142,25 @@ export class Gamelogic {
             && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate);
     }
 
-    check() {
-        let levelDone = true;
+    check(): boolean {
+        let levelDone: boolean = true;
 
-        //check each level target has crate
-        for (let targetMetal of this.level.targetMetal) {
-            let crate = this.map.getSprite(targetMetal.x, targetMetal.y, LayerId.crate);
-            let filled = crate && crate.asset === ImageAsset.crate_metal;
-            levelDone = levelDone && filled;
-            targetMetal.asset = filled ? ImageAsset.target_metal_2 : ImageAsset.target_metal_1;
-        }
-
-        for (let targetWood of this.level.targetWood) {
-            let crate = this.map.getSprite(targetWood.x, targetWood.y, LayerId.crate);
-            let filled = crate && crate.asset === ImageAsset.crate_wood;
-            levelDone = levelDone && filled;
-            targetWood.asset = filled ? ImageAsset.target_wood_2 : ImageAsset.target_wood_1;
-        }
+        //check each level target is filled
+        levelDone = levelDone && this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
+        levelDone = levelDone && this.checkTarget(this.level.targetWood, ImageAsset.crate_wood, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
+        levelDone = levelDone && this.checkTarget(this.level.targetPlayer, ImageAsset.player, LayerId.player, ImageAsset.target_player_1, ImageAsset.target_player_2);
 
         console.log("levelDone", levelDone);
+        return levelDone;
+    }
+    private checkTarget(targets: Sprite[], targetAsset: ImageAsset, layerId: LayerId, emptyImage: ImageAsset, doneImage: ImageAsset) {
+        let allDone = true;
+        for (let target of targets) {
+            let crate = this.map.getSprite(target.x, target.y, layerId);
+            let isDone = crate && crate.asset === targetAsset;
+            allDone = allDone && isDone;
+            target.asset = isDone ? doneImage : emptyImage;
+        }
+        return allDone;
     }
 }

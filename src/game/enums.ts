@@ -10,6 +10,8 @@ export enum ImageAsset {
     target_wood_2 = "target_wood_2.png",
     target_metal_1 = "target_metal_1.png",
     target_metal_2 = "target_metal_2.png",
+    target_player_1 = "target_player_1.png",
+    target_player_2 = "target_player_2.png",
 
     wall = "wall.png",
 
