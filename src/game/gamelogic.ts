@@ -41,7 +41,8 @@ export class Gamelogic {
     }
 
     load(index: number) {
-        //TODO hide finish image
+        //hide finish image
+        document.getElementById("alldone").style.display = "none";
 
         let levelData = levels[index];
 

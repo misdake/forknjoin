@@ -2,6 +2,7 @@ import {GameMap} from "../renderer/map";
 import {H, W} from "../util";
 import {Gamelogic} from "./gamelogic";
 import {Action, ImageAsset, LayerId} from "./enums";
+import {levels} from "./levels";
 
 export class Game {
     private readonly canvas: HTMLCanvasElement;
@@ -43,6 +44,20 @@ export class Game {
                 }
             }
         });
+
+        //level buttons
+        let buttonsHtml = "";
+        for (let i = 0; i < levels.length; i++) {
+            buttonsHtml = buttonsHtml + `<button id="load${i}" style="font-size: 32px;">${i + 1}</button>\n`;
+        }
+        document.getElementById("levels").innerHTML = buttonsHtml;
+        for (let i = 0; i < levels.length; i++) {
+            let button = document.getElementById(`load${i}`);
+            button.onclick = () => {
+                this.gamelogic.load(i);
+                this.map.draw(this.canvas, this.context);
+            };
+        }
     }
 
     update(action: Action, param?: any) {
@@ -64,6 +79,7 @@ export class Game {
                 }, 500);
             } else {
                 console.log("all done!");
+                document.getElementById("alldone").style.display = "block";
             }
         }
 

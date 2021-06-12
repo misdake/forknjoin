@@ -5,6 +5,7 @@ import {Action} from "./game/enums";
 import {SoundAssets} from "./renderer/sound";
 
 let canvas = document.getElementById("canvas") as HTMLCanvasElement;
+let alldone = document.getElementById("alldone") as HTMLDivElement;
 let context = canvas.getContext("2d");
 
 let w = TILE_SIZE * W;
@@ -13,6 +14,8 @@ canvas.width = w;
 canvas.height = h;
 canvas.style.width = w + "px";
 canvas.style.height = h + "px";
+alldone.style.width = w + "px";
+alldone.style.height = h + "px";
 
 context.clearRect(0, 0, w, h);
 context.strokeStyle = "gray";
