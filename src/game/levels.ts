@@ -36,16 +36,15 @@ export interface Level {
 
     map: number[];
 }
-
 levels[0] = {
     forkMax: 0,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, o, o, o, o, o, o, o, w,
-        w, o, o, c, o, o, o, o, w,
-        w, o, o, o, A, o, X, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, o, o, o, o, w,
         o, o, P, o, A, o, X, o, Z,
-        w, o, o, o, B, o, Y, o, w,
+        w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
@@ -56,10 +55,10 @@ levels[1] = {
     map: [
         w, w, w, w, w, w, w, w, w,
         w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
+        w, o, o, c, o, o, o, o, w,
+        w, o, o, o, A, o, X, o, w,
         o, o, P, o, A, o, X, o, Z,
-        w, o, o, o, o, o, o, o, w,
+        w, o, o, o, B, o, Y, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, w, w, w, w, w, w, w, w,

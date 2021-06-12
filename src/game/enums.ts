@@ -29,6 +29,7 @@ export enum SoundAsset {
     fork = "fork.wav",
     join = "join.wav",
     done = "done.wav",
+    move = "move.wav",
 }
 
 export enum Action {

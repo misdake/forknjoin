@@ -1,8 +1,7 @@
 import {GameMap} from "../renderer/map";
 import {H, W} from "../util";
 import {Gamelogic} from "./gamelogic";
-import {Action, ImageAsset, LayerId, SoundAsset} from "./enums";
-import {SoundAssets} from "../renderer/sound";
+import {Action, ImageAsset, LayerId} from "./enums";
 
 export class Game {
     private readonly canvas: HTMLCanvasElement;
@@ -57,11 +56,15 @@ export class Game {
         let done = this.gamelogic.check();
 
         if (done) {
-            SoundAssets.play(SoundAsset.done);
-            setTimeout(() => {
-                this.gamelogic.nextLevel();
-                this.map.draw(this.canvas, this.context);
-            }, 500);
+            let nextLevel = this.gamelogic.hasNextLevel();
+            if (nextLevel > 0) {
+                setTimeout(() => {
+                    this.gamelogic.load(nextLevel);
+                    this.map.draw(this.canvas, this.context);
+                }, 500);
+            } else {
+                console.log("all done!");
+            }
         }
 
         this.map.draw(this.canvas, this.context);

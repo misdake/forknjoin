@@ -1,8 +1,9 @@
 import {GameMap} from "../renderer/map";
-import {Action, ImageAsset, LayerId} from "./enums";
+import {Action, ImageAsset, LayerId, SoundAsset} from "./enums";
 import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
+import {SoundAssets} from "../renderer/sound";
 
 class GameLevel {
     constructor(index: number) {
@@ -10,6 +11,7 @@ class GameLevel {
     }
     index: number;
     done: boolean = false;
+    soundPlayed: boolean = false;
     playerSprite: Sprite = null;
     crateWood: Sprite[] = [];
     crateMetal: Sprite[] = [];
@@ -28,18 +30,14 @@ export class Gamelogic {
         this.map = map;
     }
 
-    nextLevel() {
+    hasNextLevel() {
         if (this.level) {
             let nextIndex = this.level.index + 1;
             if (levels[nextIndex]) {
-                this.load(nextIndex);
-                return true;
-            } else {
-                console.log("all done!");
-                //TODO show finish image
+                return nextIndex;
             }
         }
-        return false;
+        return -1;
     }
 
     load(index: number) {
@@ -149,6 +147,7 @@ export class Gamelogic {
                 if (this.isCrateOk(nnx, nny)) {
                     this.level.playerSprite.move(nx, ny);
                     crate.move(nnx, nny);
+                    SoundAssets.play(SoundAsset.move);
                 }
             }
         }
@@ -182,7 +181,6 @@ export class Gamelogic {
                 }
             }
         }
-
         //TODO move forked
     }
 
@@ -197,6 +195,12 @@ export class Gamelogic {
         if (levelDone) console.log("levelDone", !!levelDone);
 
         this.level.done = this.level.done || levelDone;
+
+        if (levelDone && !this.level.soundPlayed) {
+            this.level.soundPlayed = true;
+            SoundAssets.play(SoundAsset.done);
+        }
+
         return levelDone;
     }
     private checkTarget(targets: Sprite[], targetAsset: ImageAsset, layerId: LayerId, emptyImage: ImageAsset, doneImage: ImageAsset) {
