@@ -1,11 +1,8 @@
-export enum ImageAsset {
-    Placeholder = "placeholder.png",
-    Character = "character.png",
-}
+import {ImageAsset} from "../game/game";
 
 const FALLBACK_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==";
 
-export class Assets {
+export class ImageAssets {
 
     private static images = new Map<string, HTMLImageElement>();
 
@@ -13,10 +10,11 @@ export class Assets {
         let assets = Object.values(ImageAsset);
 
         return Promise.all(assets.map(file => {
+            console.log("load file", file);
             let promise = new Promise<void>((resolve, reject) => {
                 let image = new Image();
                 image.src = "assets/" + file;
-                Assets.images.set(file, image);
+                ImageAssets.images.set(file, image);
                 image.onload = () => {
                     resolve();
                 };
@@ -30,7 +28,7 @@ export class Assets {
     }
 
     static get(asset: ImageAsset): HTMLImageElement {
-        return Assets.images.get(asset.valueOf());
+        return ImageAssets.images.get(asset.valueOf());
     }
 
 }
