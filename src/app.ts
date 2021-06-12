@@ -30,8 +30,11 @@ context.strokeRect(0, 0, w, h);
             case 'a': action = Action.left; break;
             case 's': action = Action.down; break;
             case 'd': action = Action.right; break;
+            case ' ': action = Action.idle; break;
+
             case 'j': action = Action.join; break;
             case 'k': action = Action.fork; break;
+
             case 'r': action = Action.restart; break;
         }
         // @formatter:on

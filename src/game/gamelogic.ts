@@ -143,21 +143,20 @@ export class Gamelogic {
     }
 
     check(): boolean {
-        let levelDone: boolean = true;
-
         //check each level target is filled
-        levelDone = levelDone && this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
-        levelDone = levelDone && this.checkTarget(this.level.targetWood, ImageAsset.crate_wood, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
-        levelDone = levelDone && this.checkTarget(this.level.targetPlayer, ImageAsset.player, LayerId.player, ImageAsset.target_player_1, ImageAsset.target_player_2);
+        let checkMetal = this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_metal_1, ImageAsset.target_metal_2);
+        let checkWood = this.checkTarget(this.level.targetWood, ImageAsset.crate_wood, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
+        let player = this.checkTarget(this.level.targetPlayer, ImageAsset.player, LayerId.player, ImageAsset.target_player_1, ImageAsset.target_player_2);
 
-        console.log("levelDone", levelDone);
+        let levelDone = checkWood && checkMetal && player;
+        if (levelDone) console.log("levelDone", !!levelDone);
         return levelDone;
     }
     private checkTarget(targets: Sprite[], targetAsset: ImageAsset, layerId: LayerId, emptyImage: ImageAsset, doneImage: ImageAsset) {
         let allDone = true;
         for (let target of targets) {
-            let crate = this.map.getSprite(target.x, target.y, layerId);
-            let isDone = crate && crate.asset === targetAsset;
+            let targetSprite = this.map.getSprite(target.x, target.y, layerId);
+            let isDone = targetSprite && targetSprite.asset === targetAsset;
             allDone = allDone && isDone;
             target.asset = isDone ? doneImage : emptyImage;
         }

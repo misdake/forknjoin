@@ -26,6 +26,7 @@ export enum Action {
     down,
     left,
     right,
+    idle,
 
     fork = 10,
     join,
