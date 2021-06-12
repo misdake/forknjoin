@@ -63,10 +63,10 @@ export class Gamelogic {
                         case ImageAsset.crate_metal:
                             this.level.crateMetal.push(sprite);
                             break;
-                        case ImageAsset.target_wood:
+                        case ImageAsset.target_wood_1:
                             this.level.targetWood.push(sprite);
                             break;
-                        case ImageAsset.target_metal:
+                        case ImageAsset.target_metal_1:
                             this.level.targetMetal.push(sprite);
                             break;
                     }
@@ -109,13 +109,29 @@ export class Gamelogic {
         let nx = x + dx;
         let ny = y + dy;
 
+        if (!this.map.getSprite(nx, ny, LayerId.bg)) return;
+
         let wall = this.map.getSprite(nx, ny, LayerId.wall);
         if (wall) return;
 
-        let crate = this.map.getSprite(nx, ny, LayerId.crate);
-        if (!crate) {
+        if (this.isEmpty(nx, ny)) {
             this.level.playerSprite.move(nx, ny);
+        } else {
+            let crate = this.map.getSprite(nx, ny, LayerId.crate);
+            if (crate) {
+                //try push
+                let nnx = x + dx * 2;
+                let nny = y + dy * 2;
+                if (this.isEmpty(nnx, nny)) {
+                    crate.move(nnx, nny);
+                    this.level.playerSprite.move(nx, ny);
+                }
+            }
         }
+    }
+    private isEmpty(x: number, y: number) {
+        return this.map.getSprite(x, y, LayerId.bg)
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate);
     }
 
     check() {

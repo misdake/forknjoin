@@ -1,5 +1,6 @@
 import {Layer} from "./layer";
 import {LayerId} from "../game/enums";
+import {H, W} from "../util";
 
 export class GameMap {
     private readonly layers: Layer[];
@@ -26,6 +27,9 @@ export class GameMap {
     }
 
     getSprite(x: number, y: number, ...layerIds: LayerId[]) {
+        if (x < 0 || x >= W) return null;
+        if (y < 0 || y >= H) return null;
+
         for (let layerId of layerIds) {
             let layer = this.layers[layerId];
             if (layer) {

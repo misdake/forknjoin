@@ -5,8 +5,11 @@ export enum ImageAsset {
 
     crate_wood = "crate_wood.png",
     crate_metal = "crate_metal.png",
-    target_wood = "target_wood.png",
-    target_metal = "target_metal.png",
+
+    target_wood_1 = "target_wood_1.png",
+    target_wood_2 = "target_wood_2.png",
+    target_metal_1 = "target_metal_1.png",
+    target_metal_2 = "target_metal_2.png",
 
     wall = "wall.png",
 

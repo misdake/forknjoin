@@ -50,15 +50,16 @@ export class Layer {
     }
 
     get(x: number, y: number) {
+        if (x < 0 || x >= W) return null;
+        if (y < 0 || y >= H) return null;
+
         return this.cells[x][y];
     }
 
-    is(x: number, y: number, asset: ImageAsset) {
-        let sprite = this.get(x, y);
-        return (!sprite && !asset) || (sprite.asset === asset);
-    }
-
     move(sprite: Sprite, newX: number, newY: number): boolean {
+        if (newX < 0 || newX >= W) return null;
+        if (newY < 0 || newY >= H) return null;
+
         if (!this.set.has(sprite)) {
             console.log("sprite is not on this layer!");
             return false;
@@ -71,7 +72,7 @@ export class Layer {
         }
 
         this.cells[sprite.x][sprite.y] = null;
-        this.cells[newX][newY] = null;
+        this.cells[newX][newY] = sprite;
         sprite.x = newX;
         sprite.y = newY;
 

@@ -18,8 +18,8 @@ export const CELL_IMAGE_MAPPING: ImageAsset[] = [];
 CELL_IMAGE_MAPPING[P] = ImageAsset.player;
 CELL_IMAGE_MAPPING[A] = ImageAsset.crate_wood;
 CELL_IMAGE_MAPPING[B] = ImageAsset.crate_metal;
-CELL_IMAGE_MAPPING[X] = ImageAsset.target_wood;
-CELL_IMAGE_MAPPING[Y] = ImageAsset.target_metal;
+CELL_IMAGE_MAPPING[X] = ImageAsset.target_wood_1;
+CELL_IMAGE_MAPPING[Y] = ImageAsset.target_metal_1;
 CELL_IMAGE_MAPPING[w] = ImageAsset.wall;
 export const CELL_LAYER_MAPPING: LayerId[] = [];
 CELL_LAYER_MAPPING[P] = LayerId.player;
@@ -42,7 +42,7 @@ levels[0] = {
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
-        w, o, P, o, A, o, X, o, w,
+        o, o, P, o, A, o, X, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
