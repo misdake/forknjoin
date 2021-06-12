@@ -49,6 +49,9 @@ export class Game {
         //move
         this.gamelogic.keyboard(action, param);
 
+        //tick
+        this.gamelogic.tick();
+
         //check level finish
         this.gamelogic.check();
 

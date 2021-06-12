@@ -6,12 +6,13 @@ import {Sprite} from "../renderer/sprite";
 
 class GameLevel {
     index: number;
-    playerSprite: Sprite;
-    crateWood: Sprite[];
-    crateMetal: Sprite[];
-    targetWood: Sprite[];
-    targetMetal: Sprite[];
-    targetPlayer: Sprite[];
+    playerSprite: Sprite = null;
+    crateWood: Sprite[] = [];
+    crateMetal: Sprite[] = [];
+    targetWood: Sprite[] = [];
+    targetMetal: Sprite[] = [];
+    targetPlayer: Sprite[] = [];
+    cracks: Sprite[] = [];
 }
 
 export class Gamelogic {
@@ -27,12 +28,6 @@ export class Gamelogic {
         let levelData = levels[index];
 
         this.level = new GameLevel();
-        this.level.playerSprite = null;
-        this.level.crateWood = [];
-        this.level.crateMetal = [];
-        this.level.targetWood = [];
-        this.level.targetMetal = [];
-        this.level.targetPlayer = [];
 
         if (levelData.map.length !== W * H) {
             console.log("map size doesn't match!");
@@ -73,6 +68,9 @@ export class Gamelogic {
                             break;
                         case ImageAsset.target_player_1:
                             this.level.targetPlayer.push(sprite);
+                            break;
+                        case ImageAsset.crack_1:
+                            this.level.cracks.push(sprite);
                             break;
                     }
                 }
@@ -121,7 +119,7 @@ export class Gamelogic {
         let wall = this.map.getSprite(nx, ny, LayerId.wall);
         if (wall) return;
 
-        if (this.isEmpty(nx, ny)) {
+        if (this.isPlayerOk(nx, ny)) {
             //empty => move
             this.level.playerSprite.move(nx, ny);
         } else {
@@ -130,18 +128,22 @@ export class Gamelogic {
                 //crate => try push
                 let nnx = x + dx * 2;
                 let nny = y + dy * 2;
-                if (this.isEmpty(nnx, nny)) {
-                    crate.move(nnx, nny);
+                if (this.isCrateOk(nnx, nny)) {
                     this.level.playerSprite.move(nx, ny);
+                    crate.move(nnx, nny);
                 }
             }
         }
     }
-    private isEmpty(x: number, y: number) {
+    private isPlayerOk(x: number, y: number) {
         return this.map.getSprite(x, y, LayerId.bg)
-            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate);
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate)
+            && !this.map.isSprite(ImageAsset.crack_3, x, y, LayerId.crack);
     }
-
+    private isCrateOk(x: number, y: number) {
+        return this.map.getSprite(x, y, LayerId.bg)
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
+    }
     check(): boolean {
         //check each level target is filled
         let checkMetal = this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_metal_1, ImageAsset.target_metal_2);
@@ -161,5 +163,24 @@ export class Gamelogic {
             target.asset = isDone ? doneImage : emptyImage;
         }
         return allDone;
+    }
+
+    tick() {
+        for (let crack of this.level.cracks) {
+            switch (crack.asset) {
+                case ImageAsset.crack_1: {
+                    if (this.level.playerSprite && this.level.playerSprite.x === crack.x && this.level.playerSprite.y === crack.y) {
+                        crack.asset = ImageAsset.crack_2;
+                    }
+                    break;
+                }
+                case ImageAsset.crack_2: {
+                    crack.asset = ImageAsset.crack_3;
+                    break;
+                }
+            }
+        }
+
+        //TODO move forked
     }
 }

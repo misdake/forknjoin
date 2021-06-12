@@ -3,6 +3,10 @@ export enum ImageAsset {
 
     player = "player.png",
 
+    crack_1 = "crack_1.png",
+    crack_2 = "crack_2.png",
+    crack_3 = "crack_3.png",
+
     crate_wood = "crate_wood.png",
     crate_metal = "crate_metal.png",
 
@@ -37,6 +41,7 @@ export enum Action {
 
 export enum LayerId {
     bg = 1,
+    crack,
     trace,
     crate,
     target,

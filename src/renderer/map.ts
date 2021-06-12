@@ -1,5 +1,5 @@
 import {Layer} from "./layer";
-import {LayerId} from "../game/enums";
+import {ImageAsset, LayerId} from "../game/enums";
 import {H, W} from "../util";
 
 export class GameMap {
@@ -40,6 +40,14 @@ export class GameMap {
             }
         }
         return null;
+    }
+    isSprite(asset: ImageAsset, x: number, y: number, ...layerIds: LayerId[]) {
+        let r = this.getSprite(x, y, ...layerIds);
+        if(r) {
+            return r.asset === asset;
+        } else {
+            return false;
+        }
     }
 
     draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
