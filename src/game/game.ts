@@ -53,7 +53,14 @@ export class Game {
         this.gamelogic.tick();
 
         //check level finish
-        this.gamelogic.check();
+        let done = this.gamelogic.check();
+
+        if (done) {
+            setTimeout(() => {
+                this.gamelogic.nextLevel();
+                this.map.draw(this.canvas, this.context);
+            });
+        }
 
         this.map.draw(this.canvas, this.context);
     }

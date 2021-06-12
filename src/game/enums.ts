@@ -42,7 +42,6 @@ export enum Action {
 export enum LayerId {
     bg = 1,
     crack,
-    trace,
     crate,
     target,
     player,

@@ -15,6 +15,13 @@ export class GameMap {
         }
     }
 
+    clearLayers() {
+        this.getLayer(LayerId.player).clear();
+        this.getLayer(LayerId.crate).clear();
+        this.getLayer(LayerId.target).clear();
+        this.getLayer(LayerId.wall).clear();
+        this.getLayer(LayerId.crack).clear();
+    }
     getLayer(id: LayerId) {
         return this.layers[id.valueOf()];
     }
