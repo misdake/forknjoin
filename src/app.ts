@@ -2,6 +2,7 @@ import {ImageAssets} from "./renderer/image";
 import {Game} from "./game/game";
 import {H, TILE_SIZE, W} from "./util";
 import {Action} from "./game/enums";
+import {SoundAssets} from "./renderer/sound";
 
 let canvas = document.getElementById("canvas") as HTMLCanvasElement;
 let context = canvas.getContext("2d");
@@ -19,6 +20,7 @@ context.strokeRect(0, 0, w, h);
 
 (async function () {
     await ImageAssets.init();
+    await SoundAssets.init();
 
     let game = new Game(canvas, context);
 

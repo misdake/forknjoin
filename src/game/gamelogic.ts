@@ -5,7 +5,11 @@ import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 
 class GameLevel {
+    constructor(index: number) {
+        this.index = index;
+    }
     index: number;
+    done: boolean = false;
     playerSprite: Sprite = null;
     crateWood: Sprite[] = [];
     crateMetal: Sprite[] = [];
@@ -43,8 +47,7 @@ export class Gamelogic {
 
         let levelData = levels[index];
 
-        this.level = new GameLevel();
-        this.level.index = index;
+        this.level = new GameLevel(index);
 
         if (levelData.map.length !== W * H) {
             console.log("map size doesn't match!");
@@ -122,6 +125,8 @@ export class Gamelogic {
     private tryMove(dx: number, dy: number) {
         if (!(this.level && this.level.playerSprite)) return;
 
+        if (this.level.done) return;
+
         let x = this.level.playerSprite.x;
         let y = this.level.playerSprite.y;
         let nx = x + dx;
@@ -190,6 +195,8 @@ export class Gamelogic {
 
         let levelDone = checkWood && checkMetal && player;
         if (levelDone) console.log("levelDone", !!levelDone);
+
+        this.level.done = this.level.done || levelDone;
         return levelDone;
     }
     private checkTarget(targets: Sprite[], targetAsset: ImageAsset, layerId: LayerId, emptyImage: ImageAsset, doneImage: ImageAsset) {

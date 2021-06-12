@@ -25,6 +25,12 @@ export enum ImageAsset {
     bg4 = "bg4.png",
 }
 
+export enum SoundAsset {
+    fork = "fork.wav",
+    join = "join.wav",
+    done = "done.wav",
+}
+
 export enum Action {
     up = 1,
     down,

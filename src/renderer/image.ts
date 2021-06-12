@@ -8,10 +8,9 @@ export class ImageAssets {
 
     static init() {
         let assets = Object.values(ImageAsset);
-
         return Promise.all(assets.map(file => {
-            console.log("load file", file);
-            let promise = new Promise<void>((resolve, reject) => {
+            console.log("loaded image", file);
+            let promise = new Promise<void>(resolve => {
                 let image = new Image();
                 image.src = "assets/" + file;
                 ImageAssets.images.set(file, image);
