@@ -32,7 +32,8 @@ export enum Action {
 export enum LayerId {
     bg = 1,
     trace,
-    moveable,
+    crate,
     target,
+    player,
     wall
 }

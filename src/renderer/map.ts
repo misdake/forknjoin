@@ -9,7 +9,7 @@ export class GameMap {
         this.layers = [];
         for (let id of layerIds) {
             if (typeof id === 'number') {
-                this.layers[id as number] = new Layer();
+                this.layers[id as number] = new Layer(id);
             }
         }
     }
@@ -23,6 +23,19 @@ export class GameMap {
         if (layer) {
             callback(layer);
         }
+    }
+
+    getSprite(x: number, y: number, ...layerIds: LayerId[]) {
+        for (let layerId of layerIds) {
+            let layer = this.layers[layerId];
+            if (layer) {
+                let sprite = layer.get(x, y);
+                if (sprite) {
+                    return sprite;
+                }
+            }
+        }
+        return null;
     }
 
     draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {

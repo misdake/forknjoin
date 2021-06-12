@@ -6,8 +6,10 @@ import {ImageAsset} from "../game/enums";
 export class Layer {
     private readonly cells: Sprite[][];
     private readonly set: Set<Sprite>;
+    public readonly id;
 
-    constructor() {
+    constructor(id: number) {
+        this.id = id;
         this.cells = [];
         for (let i = 0; i < W; i++) {
             this.cells[i] = [];
@@ -34,6 +36,7 @@ export class Layer {
         sprite.x = x;
         sprite.y = y;
         this.set.add(sprite);
+        this.cells[x][y] = sprite;
         return sprite;
     }
     deleteSprite(sprite: Sprite) {
@@ -62,7 +65,7 @@ export class Layer {
         }
 
         let target = this.get(newX, newY);
-        if (!target) {
+        if (target) {
             console.log("move target is not empty!");
             return false;
         }
