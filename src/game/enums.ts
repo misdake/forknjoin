@@ -1,7 +1,10 @@
 export enum ImageAsset {
     placeholder = "placeholder.png",
 
-    player = "player.png",
+    player_u = "player_u.png",
+    player_d = "player_d.png",
+    player_l = "player_l.png",
+    player_r = "player_r.png",
 
     crack_1 = "crack_1.png",
     crack_2 = "crack_2.png",

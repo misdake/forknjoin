@@ -11,16 +11,25 @@
     </style>
 </head>
 <body>
-<div style="position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: 640px; height: fit-content; font-size: 32px;">
-    <div style="margin-bottom: 10px;">
-        <span>level:</span>
-        <span id="levels">
-        </span>
-        <div>
-            <span>Move: WASD, Restart: R</span>
+<div id="container" style="position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: fit-content; height: fit-content;">
+    <div style="position: absolute; left: 0; width: 1500px; height: 100%; font-size: 16px;">
+        <div style="margin-bottom: 16px;">
+            <div style="font-size: 16px;">Levels:</div>
+            <div id="levels"></div>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <div>Controls:</div>
+            <div>move: WASD</div>
+            <div>idle: Space</div>
+            <div>restart: R</div>
+            <div>fork: K</div>
+            <div>join: J</div>
+        </div>
+        <div style="position: absolute; bottom: 0;">
+            forknjoin<br>GMTK 2021
         </div>
     </div>
-    <div style="position: relative;">
+    <div style="position: relative; left: 150px">
         <div id="alldone" style="display: none; position: absolute; background: rgba(255,255,255,0.8);">
             <div style="position: absolute; color: #222850; width: fit-content; height: fit-content; margin: auto; left: 0; right: 0; top: 0; bottom: 0; font-size: 48px;">Congratulations!<br>Thanks for playing!</div>
         </div>
