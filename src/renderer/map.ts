@@ -1,5 +1,5 @@
 import {Layer} from "./layer";
-import {LayerId} from "../game/game";
+import {LayerId} from "../game/enums";
 
 export class GameMap {
     private readonly layers: Layer[];

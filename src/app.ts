@@ -1,6 +1,7 @@
 import {ImageAssets} from "./renderer/image";
-import {Action, Game} from "./game/game";
+import {Game} from "./game/game";
 import {H, TILE_SIZE, W} from "./util";
+import {Action} from "./game/enums";
 
 let canvas = document.getElementById("canvas") as HTMLCanvasElement;
 let context = canvas.getContext("2d");
@@ -25,13 +26,13 @@ context.strokeRect(0, 0, w, h);
         // @formatter:off
         let action = null;
         switch (event.key) {
-            case 'w': action = Action.Up; break;
-            case 'a': action = Action.Left; break;
-            case 's': action = Action.Down; break;
-            case 'd': action = Action.Right; break;
-            case 'j': action = Action.Join; break;
-            case 'k': action = Action.Fork; break;
-            case 'r': action = Action.Restart; break;
+            case 'w': action = Action.up; break;
+            case 'a': action = Action.left; break;
+            case 's': action = Action.down; break;
+            case 'd': action = Action.right; break;
+            case 'j': action = Action.join; break;
+            case 'k': action = Action.fork; break;
+            case 'r': action = Action.restart; break;
         }
         // @formatter:on
 

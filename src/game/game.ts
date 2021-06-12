@@ -1,43 +1,14 @@
 import {GameMap} from "../renderer/map";
 import {H, W} from "../util";
-
-export enum ImageAsset {
-    placeholder = "placeholder.png",
-    player = "player.png",
-
-    wall = "wall.png",
-
-    bg1 = "bg1.png",
-    bg2 = "bg2.png",
-    bg3 = "bg3.png",
-    bg4 = "bg4.png",
-}
-
-export enum Action {
-    Up = 1,
-    Down,
-    Left,
-    Right,
-
-    Fork = 10,
-    Join,
-
-    Restart = 20,
-    Load, // param = level id
-}
-
-export enum LayerId {
-    bg = 1,
-    trace,
-    crate,
-    target,
-    player,
-    wall
-}
+import {Gamelogic} from "./gamelogic";
+import {Action, ImageAsset, LayerId} from "./enums";
 
 export class Game {
     private readonly canvas: HTMLCanvasElement;
     private readonly context: CanvasRenderingContext2D;
+
+    private readonly map: GameMap;
+    private readonly gamelogic: Gamelogic;
 
     constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
         this.canvas = canvas;
@@ -46,9 +17,10 @@ export class Game {
         this.map = new GameMap();
 
         this.init();
-    }
 
-    private map: GameMap;
+        this.gamelogic = new Gamelogic(this.map);
+        this.gamelogic.load(0);
+    }
 
     init() {
         //bg
@@ -84,20 +56,16 @@ export class Game {
             }
         });
 
-        //charactor
-        this.map.visitLayer(LayerId.player, layer => {
-            layer.createSprite(3, 3, ImageAsset.player);
-        });
-
         this.map.draw(this.canvas, this.context);
     }
 
     update(action: Action, param?: any) {
-        console.log(action);
+        //move
+        this.gamelogic.keyboard(action, param);
+
+        //check level finish
+        this.gamelogic.check();
+
         this.map.draw(this.canvas, this.context);
     }
-
-    //TODO load map
-
-
 }

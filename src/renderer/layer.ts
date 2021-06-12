@@ -1,7 +1,7 @@
 import {Sprite} from "./sprite";
 import {H, TILE_SIZE, W} from "../util";
 import {ImageAssets} from "./image";
-import {ImageAsset} from "../game/game";
+import {ImageAsset} from "../game/enums";
 
 export class Layer {
     private readonly cells: Sprite[][];

@@ -1,5 +1,5 @@
 import {Layer} from "./layer";
-import {ImageAsset} from "../game/game";
+import {ImageAsset} from "../game/enums";
 
 export class Sprite {
 
