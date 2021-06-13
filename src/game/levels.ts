@@ -119,6 +119,54 @@ levels[3] = {
     ],
 };
 levels[4] = {
+    name: "Insider",
+    maxtime: 50,
+    goldtime: 32,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, w, w, w, o, o, w, w,
+        w, o, U, o, o, o, o, o, w,
+        P, o, U, w, X, X, w, o, Z,
+        w, o, o, o, o, w, w, o, w,
+        w, o, o, o, o, w, w, o, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[5] = {
+    name: "Corner",
+    maxtime: 150,
+    goldtime: 90,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, w, w, w, o, o, o, w,
+        w, o, V, o, o, o, o, o, w,
+        P, o, U, w, Y, X, w, o, Z,
+        w, o, o, o, o, w, w, o, w,
+        w, o, o, o, o, w, w, o, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[6] = {
+    name: "Corners",
+    maxtime: 200,
+    goldtime: 110,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, o, w, w, w, w, w, w,
+        w, o, U, o, o, o, U, o, w,
+        w, o, o, X, o, X, w, o, w,
+        P, o, o, o, o, o, o, o, Z,
+        w, o, o, X, o, X, o, o, w,
+        w, w, U, c, w, o, U, o, w,
+        w, w, o, o, w, w, w, o, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[7] = {
     name: "Kill-stealing",
     maxtime: 200,
     goldtime: 120,
@@ -134,7 +182,7 @@ levels[4] = {
         w, w, w, w, w, w, w, w, w,
     ],
 };
-levels[5] = {
+levels[8] = {
     name: "Teamwork<br>80 turns",
     maxtime: 80,
     goldtime: 65,
@@ -147,6 +195,22 @@ levels[5] = {
         w, o, V, V, o, Y, Y, o, Z,
         w, o, o, o, w, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[9] = {
+    name: "Corridor",
+    maxtime: 300,
+    goldtime: 220,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, w, o, o, o, o, w,
+        w, o, w, w, o, V, X, o, w,
+        w, o, o, w, o, V, X, o, w,
+        P, o, Y, U, o, V, X, o, Z,
+        w, o, Y, U, o, w, o, o, w,
+        w, o, Y, U, o, w, o, w, w,
+        w, o, o, o, o, w, o, o, w,
         w, w, w, w, w, w, w, w, w,
     ],
 };

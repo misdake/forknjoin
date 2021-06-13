@@ -32,6 +32,8 @@ context.strokeRect(0, 0, w, h);
     await ImageAssets.init();
     await SoundAssets.init();
 
+    document.getElementById("loading").style.display = "none";
+
     let game = new Game(canvas, context);
 
     window.onkeypress = event => {
