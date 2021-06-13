@@ -17,7 +17,19 @@ export class History {
     }
 
     getNodes(time: number): HistoryNode[] {
-        return []; //TODO
+        return this.visit(this.root, (node: HistoryNode) => node.time === time, []);
+    }
+    getFirst(forkStatus: string): HistoryNode {
+        let array = this.visit(this.root, (node: HistoryNode) => node.forkStatus === forkStatus, []);
+        return array.length ? array[0] : null;
+    }
+    private visit(current: HistoryNode, pred: (node: HistoryNode) => boolean, result: HistoryNode[]): HistoryNode[] {
+        if (pred(current)) {
+            result.push(current);
+        }
+        if (current.next) this.visit(current.next, pred, result);
+        if (current.fork) this.visit(current.fork, pred, result);
+        return result;
     }
 
     writeNext(node: HistoryNode) {
@@ -38,6 +50,32 @@ export class History {
         next.parent = this.current;
         fork.parent = this.current;
         this.forkStatus = fork.forkStatus;
+    }
+
+    private static findParent(from: HistoryNode, pred: (node: HistoryNode) => boolean): HistoryNode {
+        while (!pred(from) && from.parent) {
+            from = from.parent;
+        }
+        return pred(from) ? from : null;
+    }
+    backToForkNext(callback: (node: HistoryNode) => void) {
+        let s = this.current.forkStatus;
+        while (s.length > 0 && s.charAt(s.length - 1) === 'n') {
+            s = s.substring(0, s.length - 1);
+        }
+        if (s.length === 0) {
+            console.log("no valid parent");
+            return;
+        }
+        let targetStatus = s.substring(0, s.length - 1) + 'n';
+
+        let next = this.getFirst(targetStatus);
+        console.log(`look for status: ${this.current.forkStatus}=>${targetStatus}, result:`, next);
+        if (next) {
+            this.current = next;
+            this.forkStatus = this.current.forkStatus;
+            callback(this.current);
+        }
     }
 
     undo(callback: (node: HistoryNode) => void) {
@@ -63,10 +101,6 @@ export class History {
             }
         }
         console.log("no redo!");
-    }
-
-    backToFork(callback: (node: HistoryNode) => void) {
-        //TODO find fork point and change current status
     }
 }
 

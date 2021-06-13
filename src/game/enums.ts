@@ -49,7 +49,6 @@ export enum Action {
     join,
 
     restart = 20,
-    load, // param = level id
 }
 
 export enum LayerId {

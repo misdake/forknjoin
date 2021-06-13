@@ -167,6 +167,7 @@ export class Gamelogic {
                 this.fork();
                 break;
             case Action.join:
+                this.join();
                 break;
             case Action.restart:
                 this.load(this.level.index);
@@ -248,6 +249,12 @@ export class Gamelogic {
 
         //apply fork state
         this.redo();
+    }
+    private join() {
+        //write fork and next state
+        this.level.history.backToForkNext(node => {
+            this.applyHistoryNode(node);
+        });
     }
 
 
