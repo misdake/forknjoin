@@ -19,6 +19,12 @@ export class Game {
 
         this.init();
 
+        // @ts-ignore
+        window.loadlevel = (level) => {
+            levels[0] = level;
+            this.gamelogic.load(0);
+        };
+
         this.gamelogic = new Gamelogic(this.map);
         this.gamelogic.load(startLevel);
     }

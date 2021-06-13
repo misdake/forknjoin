@@ -34,10 +34,23 @@ CELL_LAYER_MAPPING[w] = LayerId.wall;
 // noinspection JSUnusedGlobalSymbols
 export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];
 
+(function () {
+    let g = window as any;
+    g.P = P;
+    g.U = U;
+    g.V = V;
+    g.X = X;
+    g.Y = Y;
+    g.Z = Z;
+    g.c = c;
+    g.w = w;
+    g.o = o;
+})();
+
 export interface Level {
     name: string;
-    maxtime : number;
-    goldtime : number;
+    maxtime: number;
+    goldtime: number;
     map: number[];
 }
 

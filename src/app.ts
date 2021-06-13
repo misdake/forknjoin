@@ -3,6 +3,7 @@ import {Game} from "./game/game";
 import {H, TILE_SIZE, W} from "./util";
 import {Action} from "./game/enums";
 import {SoundAssets} from "./renderer/sound";
+import {levels} from "./game/levels";
 
 let container = document.getElementById("container");
 let canvas = document.getElementById("canvas") as HTMLCanvasElement;
