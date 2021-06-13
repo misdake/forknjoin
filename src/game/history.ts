@@ -120,6 +120,7 @@ export class HistoryNode {
     cracks: SpriteData[];
     crateWood: SpriteData[];
     crateMetal: SpriteData[];
+    joined: Set<string> = new Set();
 
     cloneData(action: Action) {
         let b = new HistoryNode();
@@ -131,6 +132,7 @@ export class HistoryNode {
         b.cracks = this.cracks.map(c => c.clone());
         b.crateWood = this.crateWood.map(c => c.clone());
         b.crateMetal = this.crateMetal.map(c => c.clone());
+        b.joined = new Set(this.joined);
         return b;
     }
 }

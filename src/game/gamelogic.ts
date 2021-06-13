@@ -31,6 +31,7 @@ export class GameStatus {
     fromHistoryNode(node: HistoryNode, map: GameMap, gamelogic: Gamelogic) {
         this.time = node.time;
         this.forkStatus = node.forkStatus;
+        this.joined = new Set(node.joined);
 
         map.clearMovable();
         this.player = map.getLayer(LayerId.player).createSpriteWithData(node.player);
@@ -61,6 +62,7 @@ export class GameStatus {
         node.cracks = this.cracks.map(crack => crack.toData());
         node.crateWood = this.crateWood.map(crate => crate.toData());
         node.crateMetal = this.crateMetal.map(crate => crate.toData());
+        node.joined = new Set(this.joined);
         return node;
     }
 }
