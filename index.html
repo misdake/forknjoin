@@ -12,19 +12,26 @@
 </head>
 <body>
 <div id="container" style="position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: fit-content; height: fit-content;">
-    <div style="position: absolute; left: 0; width: 1500px; height: 100%; font-size: 16px;">
-        <div style="margin-bottom: 16px;">
-            <div style="font-size: 16px;">Levels:</div>
+    <div style="position: absolute; left: 0; width: 150px; height: 100%; font-size: 16px;">
+        <div style="width: 150px;">
+            <div style="font-size: 16px;">Current Level:</div>
+            <div id="currentlevel" style="font-size: 16px; line-height: 20px;"></div>
+            <div id="maxtime" style="font-size: 16px; line-height: 20px;"></div>
+            <div id="joinstatus" style="font-size: 16px; min-height: 20px; line-height: 20px;"></div>
+        </div>
+        <hr/>
+        <div style="width: 150px;">
+            <div style="font-size: 16px;">Select Level:</div>
             <div id="levels"></div>
         </div>
-        <div style="margin-bottom: 16px;">
+        <hr/>
+        <div style="width: 150px;">
             <div>Controls:</div>
             <div>move: WASD</div>
             <div>idle: Space</div>
             <div>restart: R</div>
             <div>fork: K</div>
             <div>join: J</div>
-            <div>--------</div>
             <div>undo: Z</div>
             <div>redo: X</div>
         </div>
@@ -33,7 +40,13 @@
         </div>
     </div>
     <div style="position: relative; left: 150px">
-        <div id="alldone" style="display: none; position: absolute; background: rgba(255,255,255,0.8);">
+        <div id="timehint" class="hint" style="display: none; position: absolute; background: rgba(255,255,255,0.3);">
+            <div style="position: absolute; color: #69709c; width: fit-content; height: fit-content; margin: auto; left: 0; right: 0; top: 0; bottom: 0; font-size: 48px;">Time's up<br>Please restart</div>
+        </div>
+        <div id="joinhint" class="hint" style="display: none; position: absolute; background: rgba(255,255,255,0.3);">
+            <div style="position: absolute; color: #69709c; width: fit-content; height: fit-content; margin: auto; left: 0; right: 0; top: 0; bottom: 0; font-size: 48px;">Touch the forked<br>to join together</div>
+        </div>
+        <div id="alldone" class="hint" style="display: none; position: absolute; background: rgba(255,255,255,0.8);">
             <div style="position: absolute; color: #222850; width: fit-content; height: fit-content; margin: auto; left: 0; right: 0; top: 0; bottom: 0; font-size: 48px;">Congratulations!<br>Thanks for playing!</div>
         </div>
         <canvas id="canvas" style=""></canvas>

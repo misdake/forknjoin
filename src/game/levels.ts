@@ -35,27 +35,32 @@ CELL_LAYER_MAPPING[w] = LayerId.wall;
 export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];
 
 export interface Level {
-    forkMax: number;
-
+    name: string;
+    maxtime : number;
+    goldtime : number;
     map: number[];
 }
 
 levels[0] = {
-    forkMax: 0,
+    name: "Sokoban",
+    maxtime: 20,
+    goldtime: 13,
     map: [
         w, w, w, w, w, w, w, w, w,
-        w, w, w, w, w, w, w, w, w,
         w, w, w, w, X, w, w, w, w,
+        w, w, w, w, o, w, w, w, w,
         w, w, w, w, U, w, w, w, w,
         P, o, o, o, o, o, o, o, Z,
         w, w, w, w, V, w, w, w, w,
+        w, w, w, w, o, w, w, w, w,
         w, w, w, w, Y, w, w, w, w,
-        w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
 };
 levels[1] = {
-    forkMax: 0,
+    name: "Wood and Metal",
+    maxtime: 30,
+    goldtime: 17,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, o, o, o, o, o, o, o, w,
@@ -69,7 +74,9 @@ levels[1] = {
     ],
 };
 levels[2] = {
-    forkMax: 0,
+    name: "Fork!",
+    maxtime: 30,
+    goldtime: 15,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -83,4 +90,4 @@ levels[2] = {
     ],
 };
 
-export const startLevel = 2;
+export const startLevel = 0;

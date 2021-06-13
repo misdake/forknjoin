@@ -80,8 +80,10 @@ export class Gamelogic {
     }
 
     load(index: number) {
-        //hide finish image
+        //hide hints
         document.getElementById("alldone").style.display = "none";
+        document.getElementById("timehint").style.display = "none";
+        document.getElementById("joinhint").style.display = "none";
 
         let levelData = levels[index];
 
@@ -136,6 +138,35 @@ export class Gamelogic {
         this.check();
 
         this.map.draw();
+
+        this.updateUi();
+    }
+
+    updateUi() {
+        document.getElementById("currentlevel").innerHTML = levels[this.level.index].name;
+        let maxtime = levels[this.level.index].maxtime;
+        let currenttime = this.level.time;
+        let maxtimestyle = "";
+        if (currenttime > maxtime) {
+            maxtimestyle = " style='color:red;'";
+        }
+        document.getElementById("maxtime").innerHTML = `<span${maxtimestyle}>Turns: ${currenttime} / ${maxtime} max</span>`;
+        let f = this.level.forkStatus;
+        let joinstatus = "";
+        let joinstatusstyle = "";
+        if (f.length && f.charAt(f.length - 1) === 'f') {
+            joinstatus = "forked";
+            joinstatusstyle = " style='color:red;'";
+        }
+        if (f.length && f.charAt(f.length - 1) === 'f') {
+            joinstatus = "join";
+            joinstatusstyle = " style='color:red;'";
+        }
+        if (f !== '' && this.level.joined.size) {
+            joinstatus = "joined together!";
+            joinstatusstyle = " style='color:green;'";
+        }
+        document.getElementById("joinstatus").innerHTML = `<span${joinstatusstyle}>${joinstatus}</span>`;
     }
 
     update(action: Action) {
@@ -173,7 +204,9 @@ export class Gamelogic {
                 this.redo();
                 break;
             case Action.fork:
-                this.fork();
+                if (!this.level.forks.length) { //LATER allow multi-level fork
+                    this.fork();
+                }
                 break;
             case Action.join:
                 this.join();
@@ -183,6 +216,7 @@ export class Gamelogic {
                 break;
         }
 
+        this.updateUi();
         this.map.draw();
     }
 
@@ -293,11 +327,10 @@ export class Gamelogic {
             }
         }
 
-        //TODO test join and log in level
         let fork = this.map.getSprite(this.level.player.x, this.level.player.y, LayerId.fork);
         if (fork) {
             let f = this.level.forks.find(i => i.sprite === fork);
-            if (f.node.time < this.level.time && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n') {
+            if ((f.node.time <= this.level.time && !f.node.next) && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n') {
                 this.level.joined.add(f.node.forkStatus);
                 SoundAssets.play(SoundAsset.join);
             }
@@ -307,7 +340,7 @@ export class Gamelogic {
     private forksMove() {
         let forks = this.level.forks;
         forks.forEach(f => {
-            f.sprite.alpha = f.node.time < this.level.time && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n' ? 1.0 : 0.5;
+            f.sprite.alpha = (f.node.time <= this.level.time && !f.node.next) && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n' ? 1.0 : 0.5;
             f.sprite.asset = PLAYER_FORK_MAPPING.get(f.sprite.asset);
 
             let action = f.node.action;
@@ -336,7 +369,10 @@ export class Gamelogic {
     }
 
 
-    check(): boolean { //TODO cache check result
+    check(): boolean {
+        document.getElementById("timehint").style.display = "none";
+        document.getElementById("joinhint").style.display = "none";
+
         //check each level target is filled
         let checkMetal = this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_metal_1, ImageAsset.target_metal_2);
         let checkWood = this.checkTarget(this.level.targetWood, ImageAsset.crate_wood, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);
@@ -344,9 +380,19 @@ export class Gamelogic {
 
         let levelDone = checkWood && checkMetal && player;
 
-        this.level.done = this.level.done || levelDone;
 
-        // this.level.forks
+        let maxtime = levels[this.level.index].maxtime;
+        let currenttime = this.level.time;
+        if (levelDone && currenttime > maxtime) {
+            document.getElementById("timehint").style.display = "block";
+            levelDone = false;
+        }
+        if (levelDone && this.level.forks.length) {
+            document.getElementById("joinhint").style.display = "block";
+            levelDone = false;
+        }
+
+        this.level.done = this.level.done || levelDone;
 
         if (levelDone && !this.level.soundPlayed) {
             this.level.soundPlayed = true;
