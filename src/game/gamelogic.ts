@@ -1,5 +1,5 @@
 import {GameMap} from "../renderer/map";
-import {Action, ImageAsset, LayerId, PLAYER_FORK_MAPPING, SoundAsset} from "./enums";
+import {Action, FORKJOIN_PLAYER_MAPPING, ImageAsset, LayerId, PLAYER_FORK_MAPPING, PLAYER_JOIN_MAPPING, SoundAsset} from "./enums";
 import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
@@ -28,12 +28,17 @@ export class GameStatus {
     forkStatus: string = "";
     joined: Set<string> = new Set();
 
-    fromHistoryNode(node: HistoryNode, map: GameMap) {
+    fromHistoryNode(node: HistoryNode, map: GameMap, gamelogic: Gamelogic) {
         this.time = node.time;
         this.forkStatus = node.forkStatus;
 
         map.clearMovable();
         this.player = map.getLayer(LayerId.player).createSpriteWithData(node.player);
+        if (gamelogic.isJoin()) {
+            this.player.asset = PLAYER_JOIN_MAPPING.get(this.player.asset);
+        } else if (gamelogic.isFork()) {
+            this.player.asset = PLAYER_FORK_MAPPING.get(this.player.asset);
+        }
 
         this.cracks = node.cracks.map(crate => map.getLayer(LayerId.crack).createSpriteWithData(crate));
         this.crateWood = node.crateWood.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
@@ -165,15 +170,15 @@ export class Gamelogic {
         let f = this.level.forkStatus;
         let joinstatus = "";
         let joinstatusstyle = "";
-        if (f.length && f.charAt(f.length - 1) === 'f') {
+        if (this.isFork()) {
             joinstatus = "forked";
             joinstatusstyle = " style='color:red;'";
         }
-        if (f.length && f.charAt(f.length - 1) === 'n') {
+        if (this.isJoin()) {
             joinstatus = "join";
             joinstatusstyle = " style='color:red;'";
         }
-        if (f !== '' && this.level.joined.size) {
+        if (this.level.forkStatus.length && this.isJoinedTogether()) {
             joinstatus = "joined together!";
             joinstatusstyle = " style='color:green;'";
         }
@@ -231,6 +236,22 @@ export class Gamelogic {
         this.map.draw();
     }
 
+    hasFork() {
+        return this.level.forks.length > 0;
+    }
+    isJoin(forkStatus: string = this.level.forkStatus) {
+        let f = forkStatus;
+        return f !== "" && f.charAt(f.length - 1) === 'n' && this.hasFork();
+    }
+    isFork(forkStatus: string = this.level.forkStatus) {
+        let f = forkStatus;
+        return f !== "" && f.charAt(f.length - 1) === 'f';
+    }
+    isJoinedTogether(forkStatus: string = this.level.forkStatus) {
+        let f = forkStatus;
+        return f === "" || (f.charAt(f.length - 1) === 'n' && !this.hasFork());
+    }
+
     private tryMove(dx: number, dy: number, player: Sprite) {
         let x = player.x;
         let y = player.y;
@@ -283,7 +304,7 @@ export class Gamelogic {
         this.redo();
     }
     private applyHistoryNode(node: HistoryNode) {
-        this.level.fromHistoryNode(node, this.map);
+        this.level.fromHistoryNode(node, this.map, this);
         this.forksMove();
         this.tick();
         this.check();
@@ -341,9 +362,14 @@ export class Gamelogic {
         let fork = this.map.getSprite(this.level.player.x, this.level.player.y, LayerId.fork);
         if (fork) {
             let f = this.level.forks.find(i => i.sprite === fork);
-            if ((f.node.time <= this.level.time && !f.node.next) && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n') {
+            if (!f.node.next && this.isJoin()) {
                 this.level.joined.add(f.node.forkStatus);
                 SoundAssets.play(SoundAsset.join);
+                this.level.forks = this.level.forks.filter(i => i.sprite !== fork);
+
+                if (this.isJoinedTogether()) {
+                    this.level.player.asset = FORKJOIN_PLAYER_MAPPING.get(this.level.player.asset);
+                }
             }
         }
     }
@@ -351,11 +377,11 @@ export class Gamelogic {
     private forksMove() {
         let forks = this.level.forks;
         forks.forEach(f => {
-            f.sprite.alpha = (f.node.time <= this.level.time && !f.node.next) && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n' ? 1.0 : 0.5;
-            f.sprite.asset = PLAYER_FORK_MAPPING.get(f.sprite.asset);
+            f.sprite.alpha = !f.node.next && this.isJoin() ? 1.0 : 0.5;
+            f.sprite.asset = this.isJoin(f.node.forkStatus) ? PLAYER_JOIN_MAPPING.get(f.sprite.asset) : PLAYER_FORK_MAPPING.get(f.sprite.asset);
 
             let action = f.node.action;
-            switch(action) {
+            switch (action) {
                 case Action.up:
                     this.tryMove(0, -1, f.sprite);
                     f.sprite.asset = ImageAsset.fork_u;
