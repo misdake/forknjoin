@@ -31,22 +31,26 @@ CELL_LAYER_MAPPING[Z] = LayerId.target;
 CELL_LAYER_MAPPING[c] = LayerId.crack;
 CELL_LAYER_MAPPING[w] = LayerId.wall;
 
+// noinspection JSUnusedGlobalSymbols
+export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];
+
 export interface Level {
     forkMax: number;
 
     map: number[];
 }
+
 levels[0] = {
     forkMax: 0,
     map: [
         w, w, w, w, w, w, w, w, w,
-        w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
-        o, o, P, o, U, o, X, o, Z,
-        w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
-        w, o, o, o, o, o, o, o, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, X, w, w, w, w,
+        w, w, w, w, U, w, w, w, w,
+        P, o, o, o, o, o, o, o, Z,
+        w, w, w, w, V, w, w, w, w,
+        w, w, w, w, Y, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
 };
@@ -55,15 +59,28 @@ levels[1] = {
     map: [
         w, w, w, w, w, w, w, w, w,
         w, o, o, o, o, o, o, o, w,
-        w, o, o, c, o, o, o, o, w,
-        w, o, o, o, U, o, X, o, w,
-        o, o, P, o, U, o, X, o, Z,
-        w, o, o, o, V, o, Y, o, w,
+        w, o, o, o, o, o, o, o, w,
+        w, o, o, U, o, Y, o, o, w,
+        P, c, o, o, o, o, o, c, Z,
+        w, o, o, V, o, X, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, o, o, o, o, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
     ],
 };
+levels[2] = {
+    forkMax: 0,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, o, o, U, o, X, w,
+        w, c, w, w, w, o, w, w, w,
+        P, o, w, w, w, o, o, o, Z,
+        w, c, w, w, w, o, w, w, w,
+        w, o, o, o, o, V, o, Y, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
 
-// noinspection JSUnusedGlobalSymbols
-export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];
+export const startLevel = 2;

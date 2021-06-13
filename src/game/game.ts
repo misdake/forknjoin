@@ -2,7 +2,7 @@ import {GameMap} from "../renderer/map";
 import {H, W} from "../util";
 import {Gamelogic} from "./gamelogic";
 import {Action, ImageAsset, LayerId} from "./enums";
-import {levels} from "./levels";
+import {levels, startLevel} from "./levels";
 
 export class Game {
     private readonly canvas: HTMLCanvasElement;
@@ -20,9 +20,7 @@ export class Game {
         this.init();
 
         this.gamelogic = new Gamelogic(this.map);
-        this.gamelogic.load(0);
-
-        this.map.draw();
+        this.gamelogic.load(startLevel);
     }
 
     init() {
@@ -55,7 +53,6 @@ export class Game {
             let button = document.getElementById(`load${i}`);
             button.onclick = () => {
                 this.gamelogic.load(i);
-                this.map.draw();
             };
         }
     }
@@ -68,6 +65,7 @@ export class Game {
         let done = this.gamelogic.check();
 
         if (done) {
+            console.log("levelDone");
             let nextLevel = this.gamelogic.hasNextLevel();
             if (nextLevel > 0) {
                 setTimeout(() => {

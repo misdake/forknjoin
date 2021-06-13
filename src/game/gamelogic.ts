@@ -121,9 +121,9 @@ export class Gamelogic {
             }
         }
 
-        this.check();
-
         this.level.history.init(this.level.toHistoryNode());
+
+        this.check();
 
         this.map.draw();
     }
@@ -137,25 +137,24 @@ export class Gamelogic {
                 this.tryMove(0, -1);
                 this.level.playerSprite.asset = ImageAsset.player_u;
                 this.tick();
-                this.map.draw();
                 break;
             case Action.down:
                 this.tryMove(0, 1);
                 this.level.playerSprite.asset = ImageAsset.player_d;
                 this.tick();
-                this.map.draw();
                 break;
             case Action.left:
                 this.tryMove(-1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_l;
                 this.tick();
-                this.map.draw();
                 break;
             case Action.right:
                 this.tryMove(1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_r;
                 this.tick();
-                this.map.draw();
+                break;
+            case Action.idle:
+                this.tick();
                 break;
             case Action.undo:
                 this.undo();
@@ -169,9 +168,10 @@ export class Gamelogic {
                 break;
             case Action.restart:
                 this.load(this.level.index);
-                this.map.draw();
                 break;
         }
+
+        this.map.draw();
     }
 
     private tryMove(dx: number, dy: number) {
@@ -219,7 +219,7 @@ export class Gamelogic {
     private applyHistoryNode(node: HistoryNode) {
         this.level.fromHistoryNode(node, this.map);
         this.check();
-        this.map.draw();
+        console.log("tick", this.level.time);
     }
     private undo() {
         this.level.history.undo(node => {
@@ -230,12 +230,10 @@ export class Gamelogic {
         this.level.history.redo(node => {
             this.applyHistoryNode(node);
         });
-        this.check();
     }
 
     tick() {
         this.level.time += 1;
-        console.log("begin tick", this.level.time);
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
                 case ImageAsset.crack_1: {
@@ -255,10 +253,9 @@ export class Gamelogic {
         }
         //TODO move forked
 
-        this.check();
-
+        //add next state
         this.saveMove();
-
+        //apply next state
         this.redo();
     }
 
@@ -270,7 +267,6 @@ export class Gamelogic {
         let player = this.checkTarget(this.level.targetPlayer, null, LayerId.player, ImageAsset.target_player_1, ImageAsset.target_player_2);
 
         let levelDone = checkWood && checkMetal && player;
-        if (levelDone) console.log("levelDone", !!levelDone);
 
         this.level.done = this.level.done || levelDone;
 
