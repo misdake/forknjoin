@@ -43,6 +43,9 @@ context.strokeRect(0, 0, w, h);
             case 'j': action = Action.join; break;
             case 'k': action = Action.fork; break;
 
+            case 'z': action = Action.undo; break;
+            case 'x': action = Action.redo; break;
+
             case 'r': action = Action.restart; break;
         }
         // @formatter:on

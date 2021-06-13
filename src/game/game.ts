@@ -15,14 +15,14 @@ export class Game {
         this.canvas = canvas;
         this.context = context;
 
-        this.map = new GameMap();
+        this.map = new GameMap(canvas, context);
 
         this.init();
 
         this.gamelogic = new Gamelogic(this.map);
         this.gamelogic.load(0);
 
-        this.map.draw(this.canvas, this.context);
+        this.map.draw();
     }
 
     init() {
@@ -55,17 +55,14 @@ export class Game {
             let button = document.getElementById(`load${i}`);
             button.onclick = () => {
                 this.gamelogic.load(i);
-                this.map.draw(this.canvas, this.context);
+                this.map.draw();
             };
         }
     }
 
-    update(action: Action, param?: any) {
+    update(action: Action) {
         //move
-        this.gamelogic.keyboard(action, param);
-
-        //tick
-        this.gamelogic.tick();
+        this.gamelogic.update(action);
 
         //check level finish
         let done = this.gamelogic.check();
@@ -75,14 +72,11 @@ export class Game {
             if (nextLevel > 0) {
                 setTimeout(() => {
                     this.gamelogic.load(nextLevel);
-                    this.map.draw(this.canvas, this.context);
                 }, 500);
             } else {
                 console.log("all done!");
                 document.getElementById("alldone").style.display = "block";
             }
         }
-
-        this.map.draw(this.canvas, this.context);
     }
 }

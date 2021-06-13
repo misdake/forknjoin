@@ -4,12 +4,14 @@ import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 import {SoundAssets} from "../renderer/sound";
+import {History, HistoryNode} from "./history";
 
-class GameLevel {
+export class GameStatus {
     constructor(index: number) {
         this.index = index;
     }
     index: number;
+    time: number = 0;
     done: boolean = false;
     soundPlayed: boolean = false;
     playerSprite: Sprite = null;
@@ -19,12 +21,39 @@ class GameLevel {
     targetMetal: Sprite[] = [];
     targetPlayer: Sprite[] = [];
     cracks: Sprite[] = [];
+
+    history: History = new History();
+
+    // forkStatus: string; TODO fork
+
+    fromHistoryNode(node: HistoryNode, map: GameMap) {
+        this.time = node.time;
+        // this.forkStatus = node.forkStatus; TODO fork
+
+        map.clearMovable();
+        this.playerSprite = map.getLayer(LayerId.player).createSpriteWithData(node.player);
+
+        this.cracks = node.cracks.map(crate => map.getLayer(LayerId.crack).createSpriteWithData(crate));
+        this.crateWood = node.crateWood.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
+        this.crateMetal = node.crateMetal.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
+    }
+
+    toHistoryNode(): HistoryNode {
+        let node = new HistoryNode();
+        node.time = this.time;
+        // node.forkStatus = this.forkStatus; TODO fork
+        node.player = this.playerSprite.toData();
+        node.cracks = this.cracks.map(crack => crack.toData());
+        node.crateWood = this.crateWood.map(crate => crate.toData());
+        node.crateMetal = this.crateMetal.map(crate => crate.toData());
+        return node;
+    }
 }
 
 export class Gamelogic {
-    private map: GameMap;
+    private readonly map: GameMap;
 
-    private level: GameLevel;
+    private level: GameStatus;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -46,7 +75,7 @@ export class Gamelogic {
 
         let levelData = levels[index];
 
-        this.level = new GameLevel(index);
+        this.level = new GameStatus(index);
 
         if (levelData.map.length !== W * H) {
             console.log("map size doesn't match!");
@@ -93,28 +122,46 @@ export class Gamelogic {
         }
 
         this.check();
+
+        this.level.history.init(this.level.toHistoryNode());
+
+        this.map.draw();
     }
 
-    keyboard(action: Action, param: any) {
+    update(action: Action) {
         if (this.level.done) return;
 
-        //TODO fork/join and restart/load
+        //TODO fork/join
         switch (action) {
             case Action.up:
                 this.tryMove(0, -1);
                 this.level.playerSprite.asset = ImageAsset.player_u;
+                this.tick();
+                this.map.draw();
                 break;
             case Action.down:
                 this.tryMove(0, 1);
                 this.level.playerSprite.asset = ImageAsset.player_d;
+                this.tick();
+                this.map.draw();
                 break;
             case Action.left:
                 this.tryMove(-1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_l;
+                this.tick();
+                this.map.draw();
                 break;
             case Action.right:
                 this.tryMove(1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_r;
+                this.tick();
+                this.map.draw();
+                break;
+            case Action.undo:
+                this.undo();
+                break;
+            case Action.redo:
+                this.redo();
                 break;
             case Action.fork:
                 break;
@@ -122,6 +169,7 @@ export class Gamelogic {
                 break;
             case Action.restart:
                 this.load(this.level.index);
+                this.map.draw();
                 break;
         }
     }
@@ -164,8 +212,30 @@ export class Gamelogic {
             && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
     }
 
+    private saveMove() {
+        let next = this.level.toHistoryNode();
+        this.level.history.writeNext(next);
+    }
+    private applyHistoryNode(node: HistoryNode) {
+        this.level.fromHistoryNode(node, this.map);
+        this.check();
+        this.map.draw();
+    }
+    private undo() {
+        this.level.history.undo(node => {
+            this.applyHistoryNode(node);
+        });
+    }
+    private redo() {
+        this.level.history.redo(node => {
+            this.applyHistoryNode(node);
+        });
+        this.check();
+    }
 
     tick() {
+        this.level.time += 1;
+        console.log("begin tick", this.level.time);
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
                 case ImageAsset.crack_1: {
@@ -184,10 +254,16 @@ export class Gamelogic {
             }
         }
         //TODO move forked
+
+        this.check();
+
+        this.saveMove();
+
+        this.redo();
     }
 
 
-    check(): boolean {
+    check(): boolean { //TODO cache check result
         //check each level target is filled
         let checkMetal = this.checkTarget(this.level.targetMetal, ImageAsset.crate_metal, LayerId.crate, ImageAsset.target_metal_1, ImageAsset.target_metal_2);
         let checkWood = this.checkTarget(this.level.targetWood, ImageAsset.crate_wood, LayerId.crate, ImageAsset.target_wood_1, ImageAsset.target_wood_2);

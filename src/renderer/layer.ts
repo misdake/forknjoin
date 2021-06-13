@@ -1,4 +1,4 @@
-import {Sprite} from "./sprite";
+import {Sprite, SpriteData} from "./sprite";
 import {H, TILE_SIZE, W} from "../util";
 import {ImageAssets} from "./image";
 import {ImageAsset} from "../game/enums";
@@ -27,6 +27,9 @@ export class Layer {
         }
     }
 
+    createSpriteWithData(data: SpriteData) {
+        return this.createSprite(data.x, data.y, data.asset);
+    }
     createSprite(x: number, y: number, asset: ImageAsset) {
         if (this.get(x, y)) {
             console.log("new sprite target is not empty!");

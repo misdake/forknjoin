@@ -42,6 +42,9 @@ export enum Action {
     right,
     idle,
 
+    undo,
+    redo,
+
     fork = 10,
     join,
 

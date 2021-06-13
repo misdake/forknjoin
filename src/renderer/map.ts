@@ -4,8 +4,13 @@ import {H, W} from "../util";
 
 export class GameMap {
     private readonly layers: Layer[];
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
 
-    constructor() {
+    constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+        this.canvas = canvas;
+        this.context = context;
+
         let layerIds = Object.values(LayerId);
         this.layers = [];
         for (let id of layerIds) {
@@ -20,6 +25,11 @@ export class GameMap {
         this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.target).clear();
         this.getLayer(LayerId.wall).clear();
+        this.getLayer(LayerId.crack).clear();
+    }
+    clearMovable() {
+        this.getLayer(LayerId.player).clear();
+        this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.crack).clear();
     }
     getLayer(id: LayerId) {
@@ -57,7 +67,9 @@ export class GameMap {
         }
     }
 
-    draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    draw() {
+        let canvas = this.canvas;
+        let context = this.context;
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.strokeStyle = "gray";
         context.strokeRect(0, 0, canvas.width, canvas.height);
