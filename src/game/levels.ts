@@ -104,7 +104,7 @@ levels[2] = {
 };
 levels[3] = {
     name: "Help each other",
-    maxtime: 25,
+    maxtime: 30,
     goldtime: 17,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -114,6 +114,38 @@ levels[3] = {
         P, o, w, w, o, w, o, o, Z,
         w, o, w, w, o, w, o, o, w,
         w, o, o, o, o, o, o, X, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[4] = {
+    name: "Kill-stealing",
+    maxtime: 200,
+    goldtime: 120,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, o, w, w, w, o, w,
+        w, o, U, U, X, X, w, o, w,
+        w, P, U, o, X, X, V, o, w,
+        w, o, o, w, U, Y, o, o, Z,
+        w, o, o, o, o, w, o, o, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[5] = {
+    name: "Parallelism<br>100 turns",
+    maxtime: 100,
+    goldtime: 70,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, o, w, o, o, o, w,
+        w, P, X, X, o, U, U, o, w,
+        w, o, X, V, o, U, Y, o, w,
+        w, o, V, V, o, Y, Y, o, Z,
+        w, o, o, o, w, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],

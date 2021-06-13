@@ -168,7 +168,7 @@ export class Gamelogic {
         if (currenttime <= goldtime) {
             maxtimestyle = " style='color:#aa6c39;'";
         }
-        document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime} max`;
+        document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime}`;
         let f = this.level.forkStatus;
         let joinstatus = "";
         let joinstatusstyle = "";
@@ -425,12 +425,12 @@ export class Gamelogic {
         let maxtime = levels[this.level.index].maxtime;
         let goldtime = levels[this.level.index].goldtime;
         let currenttime = this.level.time;
-        if (levelDone && currenttime > maxtime) {
-            document.getElementById("timehint").style.display = "block";
-            levelDone = false;
-        }
         if (levelDone && this.level.forks.length) {
             document.getElementById("joinhint").style.display = "block";
+            levelDone = false;
+        }
+        if (levelDone && currenttime > maxtime) {
+            document.getElementById("timehint").style.display = "block";
             levelDone = false;
         }
 
