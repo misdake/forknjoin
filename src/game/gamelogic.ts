@@ -1,6 +1,6 @@
 import {GameMap} from "../renderer/map";
 import {Action, ImageAsset, LayerId, SoundAsset} from "./enums";
-import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
+import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels, P} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 import {SoundAssets} from "../renderer/sound";
@@ -24,11 +24,11 @@ export class GameStatus {
 
     history: History = new History();
 
-    // forkStatus: string; TODO fork
+    forkStatus: string = "";
 
     fromHistoryNode(node: HistoryNode, map: GameMap) {
         this.time = node.time;
-        // this.forkStatus = node.forkStatus; TODO fork
+        this.forkStatus = node.forkStatus;
 
         map.clearMovable();
         this.playerSprite = map.getLayer(LayerId.player).createSpriteWithData(node.player);
@@ -38,10 +38,11 @@ export class GameStatus {
         this.crateMetal = node.crateMetal.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
     }
 
-    toHistoryNode(): HistoryNode {
+    toHistoryNode(action: Action): HistoryNode {
         let node = new HistoryNode();
         node.time = this.time;
-        // node.forkStatus = this.forkStatus; TODO fork
+        node.forkStatus = this.forkStatus;
+        node.action = action;
         node.player = this.playerSprite.toData();
         node.cracks = this.cracks.map(crack => crack.toData());
         node.crateWood = this.crateWood.map(crate => crate.toData());
@@ -121,7 +122,7 @@ export class Gamelogic {
             }
         }
 
-        this.level.history.init(this.level.toHistoryNode());
+        this.level.history.init(this.level.toHistoryNode(null));
 
         this.check();
 
@@ -136,25 +137,25 @@ export class Gamelogic {
             case Action.up:
                 this.tryMove(0, -1);
                 this.level.playerSprite.asset = ImageAsset.player_u;
-                this.tick();
+                this.saveMove(action);
                 break;
             case Action.down:
                 this.tryMove(0, 1);
                 this.level.playerSprite.asset = ImageAsset.player_d;
-                this.tick();
+                this.saveMove(action);
                 break;
             case Action.left:
                 this.tryMove(-1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_l;
-                this.tick();
+                this.saveMove(action);
                 break;
             case Action.right:
                 this.tryMove(1, 0);
                 this.level.playerSprite.asset = ImageAsset.player_r;
-                this.tick();
+                this.saveMove(action);
                 break;
             case Action.idle:
-                this.tick();
+                this.saveMove(action);
                 break;
             case Action.undo:
                 this.undo();
@@ -163,6 +164,7 @@ export class Gamelogic {
                 this.redo();
                 break;
             case Action.fork:
+                this.fork();
                 break;
             case Action.join:
                 break;
@@ -175,7 +177,7 @@ export class Gamelogic {
     }
 
     private tryMove(dx: number, dy: number) {
-        let x = this.level.playerSprite.x;
+        let x = this.level.playerSprite.x; //TODO sprite to param so that forks can try move
         let y = this.level.playerSprite.y;
         let nx = x + dx;
         let ny = y + dy;
@@ -212,14 +214,21 @@ export class Gamelogic {
             && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
     }
 
-    private saveMove() {
-        let next = this.level.toHistoryNode();
+    private saveMove(action: Action) {
+        //run logic
+        this.tick();
+
+        //link next state
+        let next = this.level.toHistoryNode(action);
         this.level.history.writeNext(next);
+
+        //apply next state
+        this.redo();
     }
     private applyHistoryNode(node: HistoryNode) {
         this.level.fromHistoryNode(node, this.map);
         this.check();
-        console.log("tick", this.level.time);
+        console.log("time", this.level.time, "forkStatus", this.level.forkStatus);
     }
     private undo() {
         this.level.history.undo(node => {
@@ -232,7 +241,17 @@ export class Gamelogic {
         });
     }
 
-    tick() {
+
+    private fork() {
+        //write fork and next state
+        this.level.history.forkNext();
+
+        //apply fork state
+        this.redo();
+    }
+
+
+    private tick() {
         this.level.time += 1;
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
@@ -252,11 +271,6 @@ export class Gamelogic {
             }
         }
         //TODO move forked
-
-        //add next state
-        this.saveMove();
-        //apply next state
-        this.redo();
     }
 
 

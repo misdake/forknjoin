@@ -5,6 +5,14 @@ export class SpriteData {
     x: number;
     y: number;
     asset: ImageAsset;
+
+    clone() {
+        let d = new SpriteData();
+        d.x = this.x;
+        d.y = this.y;
+        d.asset = this.asset;
+        return d;
+    }
 }
 
 export class Sprite extends SpriteData {
