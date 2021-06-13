@@ -28,6 +28,20 @@ context.clearRect(0, 0, w, h);
 context.strokeStyle = "gray";
 context.strokeRect(0, 0, w, h);
 
+function isTouchDevice() {
+    return (('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints > 0));
+}
+
+if (isTouchDevice()) {
+    document.getElementById("touchbuttons").style.display = "block";
+    document.getElementById("keymap").style.display = "none";
+} else {
+    document.getElementById("touchbuttons").style.display = "none";
+    document.getElementById("keymap").style.display = "block";
+}
+
 (async function () {
     await ImageAssets.init();
     await SoundAssets.init();

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>forknjoin</title>
     <style>
+        html {
+            touch-action: manipulation;
+        }
         html, body {
             margin: 0;
             padding: 0;
@@ -31,15 +34,32 @@
             <div id="levels"></div>
         </div>
         <hr/>
-        <div style="width: 150px;">
-            <div>Controls:</div>
-            <div>move: WASD</div>
-            <div>idle: Space</div>
-            <div>restart: R</div>
-            <div>fork: K</div>
-            <div>join: J</div>
-            <div>undo: Z</div>
-            <div>redo: X</div>
+        <div style="width: 150px; position: relative;">
+            <div id="touchbuttons">
+                <button style="position: absolute; left: 45px; top: 0; width: 40px; height: 40px;" onclick="window.onkeypress({key: 'w'})">W</button>
+                <button style="position: absolute; left: 0; top: 45px; width: 40px; height: 40px;" onclick="window.onkeypress({key: 'a'})">A</button>
+                <button style="position: absolute; left: 45px; top: 45px; width: 40px; height: 40px;" onclick="window.onkeypress({key: ' '})"></button>
+                <button style="position: absolute; left: 45px; top: 90px; width: 40px; height: 40px;" onclick="window.onkeypress({key: 's'})">S</button>
+                <button style="position: absolute; left: 90px; top: 45px; width: 40px; height: 40px;" onclick="window.onkeypress({key: 'd'})">D</button>
+
+                <button style="position: absolute; left: 0; top: 150px; width: 60px; height: 40px;" onclick="window.onkeypress({key: 'k'})">Fork(K)</button>
+                <button style="position: absolute; left: 70px; top: 150px; width: 60px; height: 40px;" onclick="window.onkeypress({key: 'j'})">Join(J)</button>
+
+                <button style="position: absolute; left: 0; top: 195px; width: 60px; height: 40px;" onclick="window.onkeypress({key: 'z'})">Undo(Z)</button>
+                <button style="position: absolute; left: 70px; top: 195px; width: 60px; height: 40px;" onclick="window.onkeypress({key: 'x'})">Redo(X)</button>
+
+                <button style="position: absolute; left: 0; top: 240px; width: 100px; height: 40px;" onclick="window.onkeypress({key: 'r'})">Restart(R)</button>
+            </div>
+            <div id="keymap">
+                <div>Controls:</div>
+                <div>move: WASD</div>
+                <div>idle: Space</div>
+                <div>restart: R</div>
+                <div>fork: K</div>
+                <div>join: J</div>
+                <div>undo: Z</div>
+                <div>redo: X</div>
+            </div>
         </div>
         <div style="position: absolute; bottom: 0;">
             forknjoin<br>GMTK 2021
