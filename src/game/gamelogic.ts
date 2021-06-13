@@ -15,7 +15,7 @@ export class GameStatus {
     done: boolean = false;
     soundPlayed: boolean = false;
     player: Sprite = null;
-    forks: Sprite[] = [];
+    forks: { node: HistoryNode, sprite: Sprite }[] = [];
     crateWood: Sprite[] = [];
     crateMetal: Sprite[] = [];
     targetWood: Sprite[] = [];
@@ -34,17 +34,13 @@ export class GameStatus {
         map.clearMovable();
         this.player = map.getLayer(LayerId.player).createSpriteWithData(node.player);
 
-        let forks = this.history.getNodesByTime(node.time);
-        //TODO use fork's parent position and apply action, overwrite fork position.
-        this.forks = forks.filter(i => i !== node).map(node => map.getLayer(LayerId.fork).createSpriteWithData(node.player));
-        this.forks.map(f => {
-            f.alpha = 0.5;
-            f.asset = PLAYER_FORK_MAPPING.get(f.asset);
-        });
-
         this.cracks = node.cracks.map(crate => map.getLayer(LayerId.crack).createSpriteWithData(crate));
         this.crateWood = node.crateWood.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
         this.crateMetal = node.crateMetal.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
+
+        let forks = this.history.getNodesByTime(node.time);
+        this.forks = forks.filter(i => i !== node).map(node => ({node, sprite: map.getLayer(LayerId.fork).createSpriteWithData(node.parent.player)}));
+        //call Gamelogic.forkMove(), use fork's parent position and apply action, overwrite fork position.
     }
 
     toHistoryNode(action: Action): HistoryNode {
@@ -144,22 +140,22 @@ export class Gamelogic {
         //TODO fork/join
         switch (action) {
             case Action.up:
-                this.tryMove(0, -1);
+                this.tryMove(0, -1, this.level.player);
                 this.level.player.asset = ImageAsset.player_u;
                 this.saveMove(action);
                 break;
             case Action.down:
-                this.tryMove(0, 1);
+                this.tryMove(0, 1, this.level.player);
                 this.level.player.asset = ImageAsset.player_d;
                 this.saveMove(action);
                 break;
             case Action.left:
-                this.tryMove(-1, 0);
+                this.tryMove(-1, 0, this.level.player);
                 this.level.player.asset = ImageAsset.player_l;
                 this.saveMove(action);
                 break;
             case Action.right:
-                this.tryMove(1, 0);
+                this.tryMove(1, 0, this.level.player);
                 this.level.player.asset = ImageAsset.player_r;
                 this.saveMove(action);
                 break;
@@ -186,9 +182,9 @@ export class Gamelogic {
         this.map.draw();
     }
 
-    private tryMove(dx: number, dy: number) {
-        let x = this.level.player.x; //TODO sprite to param so that forks can try move
-        let y = this.level.player.y;
+    private tryMove(dx: number, dy: number, player: Sprite) {
+        let x = player.x;
+        let y = player.y;
         let nx = x + dx;
         let ny = y + dy;
 
@@ -199,7 +195,7 @@ export class Gamelogic {
 
         if (this.isPlayerOk(nx, ny)) {
             //empty => move
-            this.level.player.move(nx, ny);
+            player.move(nx, ny);
         } else {
             let crate = this.map.getSprite(nx, ny, LayerId.crate);
             if (crate) {
@@ -207,7 +203,7 @@ export class Gamelogic {
                 let nnx = x + dx * 2;
                 let nny = y + dy * 2;
                 if (this.isCrateOk(nnx, nny)) {
-                    this.level.player.move(nx, ny);
+                    player.move(nx, ny);
                     crate.move(nnx, nny);
                     SoundAssets.play(SoundAsset.move);
                 }
@@ -216,17 +212,19 @@ export class Gamelogic {
     }
     private isPlayerOk(x: number, y: number) {
         return this.map.getSprite(x, y, LayerId.bg)
-            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate)
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.crate)
             && !this.map.isSprite(ImageAsset.crack_3, x, y, LayerId.crack);
     }
     private isCrateOk(x: number, y: number) {
         return this.map.getSprite(x, y, LayerId.bg)
-            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.crate, LayerId.crack);
     }
 
     private saveMove(action: Action) {
+        this.level.time += 1;
+
         //run logic
-        this.tick();
+        this.crackTick();
 
         //link next state
         let next = this.level.toHistoryNode(action);
@@ -237,6 +235,8 @@ export class Gamelogic {
     }
     private applyHistoryNode(node: HistoryNode) {
         this.level.fromHistoryNode(node, this.map);
+        this.forksMove();
+        this.crackTick();
         this.check();
         console.log("time", this.level.time, "forkStatus", this.level.forkStatus);
     }
@@ -267,18 +267,17 @@ export class Gamelogic {
     }
 
 
-    private tick() {
-        this.level.time += 1;
+    private crackTick() {
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
                 case ImageAsset.crack_1: {
-                    if (this.level.player && this.level.player.x === crack.x && this.level.player.y === crack.y) {
+                    if(this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
                         crack.asset = ImageAsset.crack_2;
                     }
                     break;
                 }
                 case ImageAsset.crack_2: {
-                    if (this.level.player && this.level.player.x === crack.x && this.level.player.y === crack.y) {
+                    if(this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
                     } else {
                         crack.asset = ImageAsset.crack_3;
                     }
@@ -286,7 +285,37 @@ export class Gamelogic {
                 }
             }
         }
-        //TODO move forked
+    }
+
+    private forksMove() {
+        let forks = this.level.forks;
+        forks.forEach(f => {
+            f.sprite.alpha = 0.5;
+            f.sprite.asset = PLAYER_FORK_MAPPING.get(f.sprite.asset);
+
+            let action = f.node.action;
+            switch(action) {
+                case Action.up:
+                    this.tryMove(0, -1, f.sprite);
+                    f.sprite.asset = ImageAsset.fork_u;
+                    break;
+                case Action.down:
+                    this.tryMove(0, 1, f.sprite);
+                    f.sprite.asset = ImageAsset.fork_d;
+                    break;
+                case Action.left:
+                    this.tryMove(-1, 0, f.sprite);
+                    f.sprite.asset = ImageAsset.fork_l;
+                    break;
+                case Action.right:
+                    this.tryMove(1, 0, f.sprite);
+                    f.sprite.asset = ImageAsset.fork_r;
+                    break;
+            }
+
+            f.node.player.x = f.sprite.x;
+            f.node.player.y = f.sprite.y;
+        });
     }
 
 
