@@ -33,6 +33,7 @@ export class SoundAssets {
     private static sounds = new Map<string, AudioBuffer>();
 
     static play(asset: SoundAsset) {
+        console.log(asset);
         let sound = SoundAssets.sounds.get(asset.valueOf());
         if (sound) {
             let bufferSource = SoundAssets.context.createBufferSource();

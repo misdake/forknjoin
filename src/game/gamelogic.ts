@@ -26,6 +26,7 @@ export class GameStatus {
     history: History = new History();
 
     forkStatus: string = "";
+    joined: Set<string> = new Set();
 
     fromHistoryNode(node: HistoryNode, map: GameMap) {
         this.time = node.time;
@@ -39,7 +40,10 @@ export class GameStatus {
         this.crateMetal = node.crateMetal.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
 
         let forks = this.history.getNodesByTime(node.time);
-        this.forks = forks.filter(i => i !== node).map(node => ({node, sprite: map.getLayer(LayerId.fork).createSpriteWithData(node.parent.player)}));
+        this.forks = forks.filter(i => i !== node && !this.joined.has(i.forkStatus)).map(node => {
+            //create sprite with parent to let it move
+            return {node, sprite: map.getLayer(LayerId.fork).createSpriteWithData(node.parent.player)};
+        });
         //call Gamelogic.forkMove(), use fork's parent position and apply action, overwrite fork position.
     }
 
@@ -224,7 +228,7 @@ export class Gamelogic {
         this.level.time += 1;
 
         //run logic
-        this.crackTick();
+        this.tick();
 
         //link next state
         let next = this.level.toHistoryNode(action);
@@ -236,7 +240,7 @@ export class Gamelogic {
     private applyHistoryNode(node: HistoryNode) {
         this.level.fromHistoryNode(node, this.map);
         this.forksMove();
-        this.crackTick();
+        this.tick();
         this.check();
         console.log("time", this.level.time, "forkStatus", this.level.forkStatus);
     }
@@ -256,28 +260,31 @@ export class Gamelogic {
         //write fork and next state
         this.level.history.forkNext();
 
+        SoundAssets.play(SoundAsset.fork);
+
         //apply fork state
         this.redo();
     }
     private join() {
         //write fork and next state
         this.level.history.backToForkNext(node => {
+            SoundAssets.play(SoundAsset.join);
             this.applyHistoryNode(node);
         });
     }
 
 
-    private crackTick() {
+    private tick() {
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
                 case ImageAsset.crack_1: {
-                    if(this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
+                    if (this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
                         crack.asset = ImageAsset.crack_2;
                     }
                     break;
                 }
                 case ImageAsset.crack_2: {
-                    if(this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
+                    if (this.map.getSprite(crack.x, crack.y, LayerId.player, LayerId.fork)) {
                     } else {
                         crack.asset = ImageAsset.crack_3;
                     }
@@ -285,12 +292,22 @@ export class Gamelogic {
                 }
             }
         }
+
+        //TODO test join and log in level
+        let fork = this.map.getSprite(this.level.player.x, this.level.player.y, LayerId.fork);
+        if (fork) {
+            let f = this.level.forks.find(i => i.sprite === fork);
+            if (f.node.time < this.level.time && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n') {
+                this.level.joined.add(f.node.forkStatus);
+                SoundAssets.play(SoundAsset.join);
+            }
+        }
     }
 
     private forksMove() {
         let forks = this.level.forks;
         forks.forEach(f => {
-            f.sprite.alpha = 0.5;
+            f.sprite.alpha = f.node.time < this.level.time && this.level.forkStatus.charAt(this.level.forkStatus.length - 1) === 'n' ? 1.0 : 0.5;
             f.sprite.asset = PLAYER_FORK_MAPPING.get(f.sprite.asset);
 
             let action = f.node.action;
@@ -328,6 +345,8 @@ export class Gamelogic {
         let levelDone = checkWood && checkMetal && player;
 
         this.level.done = this.level.done || levelDone;
+
+        // this.level.forks
 
         if (levelDone && !this.level.soundPlayed) {
             this.level.soundPlayed = true;
