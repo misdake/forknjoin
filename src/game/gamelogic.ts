@@ -49,7 +49,7 @@ export class GameStatus {
             //create sprite with parent to let it move
             return {node, sprite: map.getLayer(LayerId.fork).createSpriteWithData(node.parent.player)};
         });
-        //call Gamelogic.forkMove(), use fork's parent position and apply action, overwrite fork position.
+        //call Gamelogic.forksMove(), use fork's parent position and apply action, overwrite fork position.
     }
 
     toHistoryNode(action: Action): HistoryNode {
@@ -287,7 +287,7 @@ export class Gamelogic {
     }
     private isCrateOk(x: number, y: number) {
         return this.map.getSprite(x, y, LayerId.bg)
-            && !this.map.getSprite(x, y, LayerId.wall, LayerId.crate, LayerId.crack);
+            && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
     }
 
     private saveMove(action: Action) {
@@ -366,6 +366,8 @@ export class Gamelogic {
                 this.level.joined.add(f.node.forkStatus);
                 SoundAssets.play(SoundAsset.join);
                 this.level.forks = this.level.forks.filter(i => i.sprite !== fork);
+
+                this.map.getLayer(LayerId.fork).deleteSprite(fork);
 
                 if (this.isJoinedTogether()) {
                     this.level.player.asset = FORKJOIN_PLAYER_MAPPING.get(this.level.player.asset);

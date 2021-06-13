@@ -74,7 +74,7 @@ levels[1] = {
     ],
 };
 levels[2] = {
-    name: "K to Fork!",
+    name: "K to Fork<br>Then<br>J to Join",
     maxtime: 30,
     goldtime: 15,
     map: [
@@ -85,6 +85,22 @@ levels[2] = {
         P, o, w, w, w, o, o, o, Z,
         w, c, w, w, w, o, w, w, w,
         w, o, o, o, o, V, o, Y, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+};
+levels[3] = {
+    name: "Help each other",
+    maxtime: 25,
+    goldtime: 17,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, o, o, c, o, o, o, w,
+        w, o, w, w, U, w, w, w, w,
+        P, o, w, w, o, w, o, o, Z,
+        w, o, w, w, o, w, o, o, w,
+        w, o, o, o, o, o, o, X, w,
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
