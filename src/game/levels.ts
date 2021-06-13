@@ -135,9 +135,9 @@ levels[4] = {
     ],
 };
 levels[5] = {
-    name: "Parallelism<br>100 turns",
-    maxtime: 100,
-    goldtime: 70,
+    name: "Teamwork<br>80 turns",
+    maxtime: 80,
+    goldtime: 65,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
