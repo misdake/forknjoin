@@ -16,8 +16,8 @@ export class History {
         this.forkStatus = "";
     }
 
-    getNodes(time: number): HistoryNode[] {
-        return this.visit(this.root, (node: HistoryNode) => node.time === time, []);
+    getNodesByTime(time: number): HistoryNode[] {
+        return this.visit(this.root, (node: HistoryNode) => node.time === time || (node.time < time && !node.next), []);
     }
     getFirst(forkStatus: string): HistoryNode {
         let array = this.visit(this.root, (node: HistoryNode) => node.forkStatus === forkStatus, []);

@@ -20,6 +20,7 @@ export class Sprite extends SpriteData {
     x: number;
     y: number;
     asset: ImageAsset;
+    alpha: number = 1;
     readonly layer: Layer;
 
     constructor(asset: ImageAsset, layer: Layer) {

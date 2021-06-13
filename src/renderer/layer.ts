@@ -23,6 +23,7 @@ export class Layer {
     draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
         for (let sprite of this.set) {
             let image = ImageAssets.get(sprite.asset);
+            context.globalAlpha = sprite.alpha;
             context.drawImage(image, sprite.x * TILE_SIZE, sprite.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }

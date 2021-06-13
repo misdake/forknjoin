@@ -22,6 +22,7 @@ export class GameMap {
 
     clearLayers() {
         this.getLayer(LayerId.player).clear();
+        this.getLayer(LayerId.fork).clear();
         this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.target).clear();
         this.getLayer(LayerId.wall).clear();
@@ -29,6 +30,7 @@ export class GameMap {
     }
     clearMovable() {
         this.getLayer(LayerId.player).clear();
+        this.getLayer(LayerId.fork).clear();
         this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.crack).clear();
     }
