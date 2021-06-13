@@ -74,7 +74,7 @@ levels[1] = {
     ],
 };
 levels[2] = {
-    name: "Fork!",
+    name: "K to Fork!",
     maxtime: 30,
     goldtime: 15,
     map: [
