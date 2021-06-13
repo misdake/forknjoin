@@ -1,5 +1,5 @@
 import {GameMap} from "../renderer/map";
-import {Action, ImageAsset, LayerId, SoundAsset} from "./enums";
+import {Action, ImageAsset, LayerId, PLAYER_FORK_MAPPING, SoundAsset} from "./enums";
 import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
@@ -37,7 +37,10 @@ export class GameStatus {
         let forks = this.history.getNodesByTime(node.time);
         //TODO use fork's parent position and apply action, overwrite fork position.
         this.forks = forks.filter(i => i !== node).map(node => map.getLayer(LayerId.fork).createSpriteWithData(node.player));
-        this.forks.map(f => f.alpha = 0.3);
+        this.forks.map(f => {
+            f.alpha = 0.5;
+            f.asset = PLAYER_FORK_MAPPING.get(f.asset);
+        });
 
         this.cracks = node.cracks.map(crate => map.getLayer(LayerId.crack).createSpriteWithData(crate));
         this.crateWood = node.crateWood.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));

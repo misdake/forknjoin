@@ -53,6 +53,7 @@ export class Game {
             let button = document.getElementById(`load${i}`);
             button.onclick = () => {
                 this.gamelogic.load(i);
+                button.blur();
             };
         }
     }

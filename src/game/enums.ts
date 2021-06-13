@@ -5,6 +5,10 @@ export enum ImageAsset {
     player_d = "player_d.png",
     player_l = "player_l.png",
     player_r = "player_r.png",
+    fork_u = "fork_u.png",
+    fork_d = "fork_d.png",
+    fork_l = "fork_l.png",
+    fork_r = "fork_r.png",
 
     crack_1 = "crack_1.png",
     crack_2 = "crack_2.png",
@@ -27,6 +31,13 @@ export enum ImageAsset {
     bg3 = "bg3.png",
     bg4 = "bg4.png",
 }
+
+export const PLAYER_FORK_MAPPING = new Map<ImageAsset, ImageAsset>([
+    [ImageAsset.player_u, ImageAsset.fork_u],
+    [ImageAsset.player_d, ImageAsset.fork_d],
+    [ImageAsset.player_l, ImageAsset.fork_l],
+    [ImageAsset.player_r, ImageAsset.fork_r],
+])
 
 export enum SoundAsset {
     fork = "fork.wav",
