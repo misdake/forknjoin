@@ -19,10 +19,6 @@ export class History {
     getNodesByTime(time: number): HistoryNode[] {
         return this.visit(this.root, (node: HistoryNode) => node.time === time || (node.time < time && !node.next), []);
     }
-    getFirst(forkStatus: string): HistoryNode {
-        let array = this.visit(this.root, (node: HistoryNode) => node.forkStatus === forkStatus, []);
-        return array.length ? array[0] : null;
-    }
     private visit(current: HistoryNode, pred: (node: HistoryNode) => boolean, result: HistoryNode[]): HistoryNode[] {
         if (pred(current)) {
             result.push(current);
@@ -67,9 +63,9 @@ export class History {
             console.log("no valid parent");
             return;
         }
-        let targetStatus = s.substring(0, s.length - 1) + 'n';
-
-        let next = this.getFirst(targetStatus);
+        let targetStatus = s.substring(0, s.length - 1);
+        let next = History.findParent(this.current, node => node.forkStatus === targetStatus);
+        next = next.next;
         console.log(`look for status: ${this.current.forkStatus}=>${targetStatus}, result:`, next);
         if (next) {
             this.current = next;
@@ -109,13 +105,13 @@ export class HistoryNode {
 
     fork: HistoryNode;
     next: HistoryNode;
+    // join: HistoryNode; //TODO
 
     time: number;
     forkStatus: string;
 
     action: Action;
 
-    // forkMax: number; TODO
     player: SpriteData;
     cracks: SpriteData[];
     crateWood: SpriteData[];

@@ -161,16 +161,26 @@ export class Gamelogic {
     updateUi() {
         document.getElementById("currentlevel").innerHTML = levels[this.level.index].name;
         let maxtime = levels[this.level.index].maxtime;
-        let goldtime = levels[this.level.index].goldtime;
+        let star3 = levels[this.level.index].star3time;
+        let star2 = levels[this.level.index].star2time;
+        let star1 = levels[this.level.index].star1time;
         let currenttime = this.level.time;
         let maxtimestyle = "";
-        if (currenttime > maxtime) {
+
+        if (currenttime > maxtime && maxtime > 0) {
             maxtimestyle = " style='color:red;'";
         }
-        if (currenttime <= goldtime) {
-            maxtimestyle = " style='color:#aa6c39;'";
+        let stars = "";
+        if (currenttime <= star1) stars += "★";
+        if (currenttime <= star2) stars += "★";
+        if (currenttime <= star3) stars += "★";
+        let starHtml = `<span style="color: gold; white-space: pre-wrap;">${stars} </span>`
+
+        if (maxtime > 0) {
+            document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime}<br/>${starHtml}`;
+        } else {
+            document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span><br/>${starHtml}`;
         }
-        document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime}`;
         let f = this.level.forkStatus;
         let joinstatus = "";
         let joinstatusstyle = "";
@@ -423,15 +433,13 @@ export class Gamelogic {
 
         let levelDone = checkWood && checkMetal && player;
 
-
         let maxtime = levels[this.level.index].maxtime;
-        let goldtime = levels[this.level.index].goldtime;
         let currenttime = this.level.time;
         if (levelDone && this.level.forks.length) {
             document.getElementById("joinhint").style.display = "block";
             levelDone = false;
         }
-        if (levelDone && currenttime > maxtime) {
+        if (levelDone && currenttime > maxtime && maxtime > 0) {
             document.getElementById("timehint").style.display = "block";
             levelDone = false;
         }
@@ -439,10 +447,10 @@ export class Gamelogic {
         this.level.done = this.level.done || levelDone;
 
         if (levelDone && !this.level.soundPlayed) {
-            if (currenttime <= goldtime) {
-                let button = document.getElementById("load" + this.level.index);
-                button.style.background = "gold";
-            }
+            // if (currenttime <= goldtime) {
+            //     let button = document.getElementById("load" + this.level.index);
+            //     button.style.background = "gold";
+            // }
             this.level.soundPlayed = true;
             SoundAssets.play(SoundAsset.done);
         }
