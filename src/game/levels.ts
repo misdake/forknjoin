@@ -51,6 +51,7 @@ export interface Level {
     name: string;
     maxtime: number;
     goldtime: number;
+    showkey: boolean;
     map: number[];
 }
 
@@ -58,6 +59,7 @@ levels[0] = {
     name: "Sokoban",
     maxtime: 20,
     goldtime: 13,
+    showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, X, w, w, w, w,
@@ -74,6 +76,7 @@ levels[1] = {
     name: "Wood and Metal",
     maxtime: 30,
     goldtime: 17,
+    showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, o, o, o, o, o, o, o, w,
@@ -90,6 +93,7 @@ levels[2] = {
     name: "K to Fork<br>Then<br>J to Join",
     maxtime: 30,
     goldtime: 15,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -106,6 +110,7 @@ levels[3] = {
     name: "Help each other",
     maxtime: 30,
     goldtime: 17,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -122,6 +127,7 @@ levels[4] = {
     name: "Insider",
     maxtime: 50,
     goldtime: 32,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -138,6 +144,7 @@ levels[5] = {
     name: "Corner",
     maxtime: 150,
     goldtime: 90,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -154,6 +161,7 @@ levels[6] = {
     name: "Corners",
     maxtime: 200,
     goldtime: 110,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, o, w, w, w, w, w, w,
@@ -170,6 +178,7 @@ levels[7] = {
     name: "Kill-stealing",
     maxtime: 200,
     goldtime: 120,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -186,6 +195,7 @@ levels[8] = {
     name: "Teamwork<br>80 turns",
     maxtime: 80,
     goldtime: 65,
+    showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
@@ -195,22 +205,6 @@ levels[8] = {
         w, o, V, V, o, Y, Y, o, Z,
         w, o, o, o, w, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
-        w, w, w, w, w, w, w, w, w,
-    ],
-};
-levels[9] = {
-    name: "Corridor",
-    maxtime: 300,
-    goldtime: 220,
-    map: [
-        w, w, w, w, w, w, w, w, w,
-        w, o, o, w, o, o, o, o, w,
-        w, o, w, w, o, V, X, o, w,
-        w, o, o, w, o, V, X, o, w,
-        P, o, Y, U, o, V, X, o, Z,
-        w, o, Y, U, o, w, o, o, w,
-        w, o, Y, U, o, w, o, w, w,
-        w, o, o, o, o, w, o, o, w,
         w, w, w, w, w, w, w, w, w,
     ],
 };

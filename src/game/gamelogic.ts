@@ -105,6 +105,8 @@ export class Gamelogic {
 
         document.getElementById("titlehint").style.opacity = "1.0";
         document.getElementById("title").innerHTML = levelData.name;
+        document.getElementById("showkey1").style.display = levelData.showkey ? "block" : "none";
+        document.getElementById("showkey2").style.display = levelData.showkey ? "block" : "none";
         if (opacityTimeout) clearTimeout(opacityTimeout);
         opacityTimeout = setTimeout(() => document.getElementById("titlehint").style.opacity = "0.0", 2000);
 
