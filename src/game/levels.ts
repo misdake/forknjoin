@@ -50,9 +50,7 @@ export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];
 export interface Level {
     name: string;
     maxtime: number;
-    star3time: number;
-    star2time: number;
-    star1time: number;
+    startimes: number[];
     showkey: boolean;
     map: number[];
 }
@@ -60,9 +58,7 @@ export interface Level {
 levels[0] = {
     name: "Sokoban",
     maxtime: -1,
-    star3time: 13,
-    star2time: 15,
-    star1time: 20,
+    startimes: [20, 15, 13],
     showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -79,9 +75,7 @@ levels[0] = {
 levels[1] = {
     name: "Wood and Metal",
     maxtime: -1,
-    star3time: 17,
-    star2time: 24,
-    star1time: 30,
+    startimes: [30, 24, 17],
     showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -98,9 +92,7 @@ levels[1] = {
 levels[2] = {
     name: "K to Fork<br>Then<br>J to Join",
     maxtime: -1,
-    star3time: 15,
-    star2time: 22,
-    star1time: 30,
+    startimes: [30, 22, 15],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -117,9 +109,7 @@ levels[2] = {
 levels[3] = {
     name: "Help each other",
     maxtime: -1,
-    star3time: 17,
-    star2time: 25,
-    star1time: 30,
+    startimes: [30, 25, 17],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -136,9 +126,7 @@ levels[3] = {
 levels[4] = {
     name: "Insider",
     maxtime: -1,
-    star3time: 33,
-    star2time: 38,
-    star1time: 50,
+    startimes: [50, 38, 33],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -155,9 +143,7 @@ levels[4] = {
 levels[5] = {
     name: "Corner",
     maxtime: -1,
-    star3time: 50,
-    star2time: 70,
-    star1time: 120,
+    startimes: [120, 70, 50],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -174,9 +160,7 @@ levels[5] = {
 levels[6] = {
     name: "Corners",
     maxtime: -1,
-    star3time: 100,
-    star2time: 130,
-    star1time: 200,
+    startimes: [200, 130, 100],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -193,9 +177,7 @@ levels[6] = {
 levels[7] = {
     name: "Kill-stealing",
     maxtime: -1,
-    star3time: 110,
-    star2time: 130,
-    star1time: 200,
+    startimes: [200, 130, 110],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -212,9 +194,7 @@ levels[7] = {
 levels[8] = {
     name: "Teamwork<br>80 turns",
     maxtime: 80,
-    star3time: 62,
-    star2time: 70,
-    star1time: 80,
+    startimes: [80, 70, 62],
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,

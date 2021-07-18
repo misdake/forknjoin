@@ -52,7 +52,12 @@ export class Game {
         //level buttons
         let buttonsHtml = "";
         for (let i = 0; i < levels.length; i++) {
-            buttonsHtml = buttonsHtml + `<button id="load${i}" style="font-size: 16px;">${i}</button>\n`;
+            buttonsHtml = buttonsHtml + `
+                <span style="position: relative;">
+                    <span class="levelbutton-bg" id="load${i}bg"></span>
+                    <button class="levelbutton" id="load${i}">${i}</button>
+                </span>\n
+            `;
         }
         document.getElementById("levels").innerHTML = buttonsHtml;
         for (let i = 0; i < levels.length; i++) {

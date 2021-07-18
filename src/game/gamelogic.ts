@@ -161,9 +161,6 @@ export class Gamelogic {
     updateUi() {
         document.getElementById("currentlevel").innerHTML = levels[this.level.index].name;
         let maxtime = levels[this.level.index].maxtime;
-        let star3 = levels[this.level.index].star3time;
-        let star2 = levels[this.level.index].star2time;
-        let star1 = levels[this.level.index].star1time;
         let currenttime = this.level.time;
         let maxtimestyle = "";
 
@@ -171,10 +168,10 @@ export class Gamelogic {
             maxtimestyle = " style='color:red;'";
         }
         let stars = "";
-        if (currenttime <= star1) stars += "★";
-        if (currenttime <= star2) stars += "★";
-        if (currenttime <= star3) stars += "★";
-        let starHtml = `<span style="color: gold; white-space: pre-wrap;">${stars} </span>`
+        for (let time of levels[this.level.index].startimes) {
+            if (currenttime <= time) stars += "★";
+        }
+        let starHtml = `<span style="color: gold; white-space: pre-wrap;">${stars}</span>`;
 
         if (maxtime > 0) {
             document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime}<br/>${starHtml}`;
@@ -447,10 +444,13 @@ export class Gamelogic {
         this.level.done = this.level.done || levelDone;
 
         if (levelDone && !this.level.soundPlayed) {
-            // if (currenttime <= goldtime) {
-            //     let button = document.getElementById("load" + this.level.index);
-            //     button.style.background = "gold";
-            // }
+            let stars = "";
+            for (let time of levels[this.level.index].startimes) {
+                if (currenttime <= time) stars += "★";
+            }
+            let bg = document.getElementById(`load${this.level.index}bg`);
+            bg.innerHTML = stars;
+
             this.level.soundPlayed = true;
             SoundAssets.play(SoundAsset.done);
         }
