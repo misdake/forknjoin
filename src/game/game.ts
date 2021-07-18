@@ -53,10 +53,10 @@ export class Game {
         let buttonsHtml = "";
         for (let i = 0; i < levels.length; i++) {
             buttonsHtml = buttonsHtml + `
-                <span style="position: relative;">
-                    <span class="levelbutton-bg" id="load${i}bg"></span>
+                <div style="position: relative;">
+                    <div class="levelbutton-bg" id="load${i}bg"></div>
                     <button class="levelbutton" id="load${i}">${i}</button>
-                </span>\n
+                </div>\n
             `;
         }
         document.getElementById("levels").innerHTML = buttonsHtml;

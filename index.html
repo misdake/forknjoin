@@ -23,6 +23,7 @@
         }
         .levelbutton-bg {
             position: absolute;
+            pointer-events: none;
             width: 40px;
             height: 40px;
             line-height: 10px;
@@ -50,7 +51,7 @@
         <hr/>
         <div style="width: 150px;">
             <div style="font-size: 16px;">Select Level:</div>
-            <div id="levels"></div>
+            <div id="levels" style="display: flex; flex-flow: row wrap;"></div>
         </div>
         <hr/>
         <div style="width: 150px; position: relative;">
