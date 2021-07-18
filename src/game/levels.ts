@@ -1,7 +1,5 @@
 import {ImageAsset, LayerId} from "./enums";
 
-export const levels: Level[] = [];
-
 export const P = 1; //player
 export const U = 2; //wood crate
 export const V = 3; //metal crate
@@ -56,7 +54,7 @@ export interface Level {
     map: number[];
 }
 
-levels[0] = {
+export const levels: Level[] = [{
     name: "Sokoban",
     maxtime: -1,
     startimes: [20, 15, 13],
@@ -73,8 +71,7 @@ levels[0] = {
         w, w, w, w, Y, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[1] = {
+}, {
     name: "Wood and Metal",
     maxtime: -1,
     startimes: [30, 24, 17],
@@ -91,8 +88,7 @@ levels[1] = {
         w, o, o, o, o, o, o, o, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[2] = {
+}, {
     name: "K to Fork<br>Then J to Join",
     maxtime: -1,
     startimes: [30, 22, 15],
@@ -109,8 +105,7 @@ levels[2] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[3] = {
+}, {
     name: "Help each other",
     maxtime: -1,
     startimes: [30, 25, 17],
@@ -127,8 +122,7 @@ levels[3] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[4] = {
+}, {
     name: "Insider",
     maxtime: -1,
     startimes: [50, 38, 33],
@@ -145,8 +139,7 @@ levels[4] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[5] = {
+}, {
     name: "Corner",
     maxtime: -1,
     startimes: [120, 70, 50],
@@ -163,8 +156,24 @@ levels[5] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[6] = {
+}, {
+    name: "One more",
+    maxtime: -1,
+    startimes: [150, 110, 85],
+    besttime: 78,
+    showkey: true,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, o, w, w, w, o, o, w, w,
+        w, o, V, o, X, o, o, o, w,
+        P, o, U, w, Y, X, w, o, Z,
+        w, o, U, o, o, w, w, o, w,
+        w, o, o, o, o, w, w, o, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+}, {
     name: "Kill-stealing",
     maxtime: -1,
     startimes: [200, 130, 110],
@@ -180,8 +189,7 @@ levels[6] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
-levels[7] = {
+}, {
     name: "Teamwork<br>80 turns",
     maxtime: 80,
     startimes: [80, 70, 62],
@@ -197,6 +205,6 @@ levels[7] = {
         w, w, w, w, w, w, w, w, w,
         w, w, w, w, w, w, w, w, w,
     ],
-};
+}];
 
 export const startLevel = 0;

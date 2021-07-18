@@ -82,7 +82,7 @@ export class Game {
             if (nextLevel > 0) {
                 setTimeout(() => {
                     this.gamelogic.load(nextLevel);
-                }, 500);
+                }, 1000);
             } else {
                 console.log("all done!");
                 document.getElementById("alldone").style.display = "block";
