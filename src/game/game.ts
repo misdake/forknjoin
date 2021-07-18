@@ -55,7 +55,7 @@ export class Game {
             buttonsHtml = buttonsHtml + `
                 <div style="position: relative;">
                     <div class="levelbutton-bg" id="load${i}bg"></div>
-                    <button class="levelbutton" id="load${i}">${i}</button>
+                    <button class="levelbutton" id="load${i}">${i + 1}</button>
                 </div>\n
             `;
         }

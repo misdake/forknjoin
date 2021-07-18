@@ -159,7 +159,7 @@ export class Gamelogic {
     }
 
     updateUi() {
-        document.getElementById("currentlevel").innerHTML = levels[this.level.index].name;
+        document.getElementById("currentlevel").innerHTML = `${this.level.index + 1}. ${levels[this.level.index].name}`;
         let maxtime = levels[this.level.index].maxtime;
         let currenttime = this.level.time;
         let maxtimestyle = "";

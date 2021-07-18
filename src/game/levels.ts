@@ -51,6 +51,7 @@ export interface Level {
     name: string;
     maxtime: number;
     startimes: number[];
+    besttime?: number;
     showkey: boolean;
     map: number[];
 }
@@ -59,6 +60,7 @@ levels[0] = {
     name: "Sokoban",
     maxtime: -1,
     startimes: [20, 15, 13],
+    besttime: 13,
     showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -76,6 +78,7 @@ levels[1] = {
     name: "Wood and Metal",
     maxtime: -1,
     startimes: [30, 24, 17],
+    besttime: 17,
     showkey: false,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -90,9 +93,10 @@ levels[1] = {
     ],
 };
 levels[2] = {
-    name: "K to Fork<br>Then<br>J to Join",
+    name: "K to Fork<br>Then J to Join",
     maxtime: -1,
     startimes: [30, 22, 15],
+    besttime: 15,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -110,6 +114,7 @@ levels[3] = {
     name: "Help each other",
     maxtime: -1,
     startimes: [30, 25, 17],
+    besttime: 17,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -127,6 +132,7 @@ levels[4] = {
     name: "Insider",
     maxtime: -1,
     startimes: [50, 38, 33],
+    besttime: 31,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -144,6 +150,7 @@ levels[5] = {
     name: "Corner",
     maxtime: -1,
     startimes: [120, 70, 50],
+    besttime: 37,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -158,23 +165,6 @@ levels[5] = {
     ],
 };
 levels[6] = {
-    name: "Corners",
-    maxtime: -1,
-    startimes: [200, 130, 100],
-    showkey: true,
-    map: [
-        w, w, w, w, w, w, w, w, w,
-        w, w, o, w, w, w, w, w, w,
-        w, o, U, o, o, o, U, o, w,
-        w, o, o, X, o, X, w, o, w,
-        P, o, o, o, o, o, o, o, Z,
-        w, o, o, X, o, X, o, o, w,
-        w, w, U, c, w, o, U, o, w,
-        w, w, o, o, w, w, w, o, w,
-        w, w, w, w, w, w, w, w, w,
-    ],
-};
-levels[7] = {
     name: "Kill-stealing",
     maxtime: -1,
     startimes: [200, 130, 110],
@@ -191,7 +181,7 @@ levels[7] = {
         w, w, w, w, w, w, w, w, w,
     ],
 };
-levels[8] = {
+levels[7] = {
     name: "Teamwork<br>80 turns",
     maxtime: 80,
     startimes: [80, 70, 62],
