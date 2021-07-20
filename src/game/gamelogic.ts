@@ -352,6 +352,8 @@ export class Gamelogic {
 
 
     private tick() {
+        //move to crack => crack 2
+        //move out of crack => crack 3
         for (let crack of this.level.cracks) {
             switch (crack.asset) {
                 case ImageAsset.crack_1: {
@@ -370,10 +372,11 @@ export class Gamelogic {
             }
         }
 
+        //check join
         let fork = this.map.getSprite(this.level.player.x, this.level.player.y, LayerId.fork);
-        if (fork) {
+        if (fork && this.isJoin()) { //this is join and there is a fork on the same tile
             let f = this.level.forks.find(i => i.sprite === fork);
-            if (!f.node.next && this.isJoin()) {
+            if (!f.node.next) {
                 this.level.joined.add(f.node.forkStatus);
                 SoundAssets.play(SoundAsset.join);
                 this.level.forks = this.level.forks.filter(i => i.sprite !== fork);
