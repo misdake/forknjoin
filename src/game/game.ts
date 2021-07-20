@@ -75,7 +75,7 @@ export class Game {
     }
 
     private loadLevel(index: number) {
-        this.buttons.forEach(button => button.style.background = "silver");
+        this.buttons.forEach(button => button.style.background = "#EEE");
         this.buttons[index].style.background = "gold";
         this.gamelogic.load(index);
     }
