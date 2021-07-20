@@ -123,6 +123,22 @@ export const levels: Level[] = [{
         w, w, w, w, w, w, w, w, w,
     ],
 }, {
+    name: "Inside-out",
+    maxtime: 0,
+    startimes: [25, 20, 17],
+    showkey: true,
+    map: [
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, o, w, w, w,
+        w, w, w, o, U, o, w, w, w,
+        P, o, o, o, o, o, o, o, Z,
+        w, w, w, w, w, o, w, w, w,
+        w, w, w, w, w, X, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+        w, w, w, w, w, w, w, w, w,
+    ],
+}, {
     name: "Insider",
     maxtime: -1,
     startimes: [50, 38, 33],
@@ -160,7 +176,7 @@ export const levels: Level[] = [{
     name: "One more",
     maxtime: -1,
     startimes: [150, 110, 85],
-    besttime: 78,
+    besttime: 75,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,
@@ -193,6 +209,7 @@ export const levels: Level[] = [{
     name: "Teamwork<br>80 turns",
     maxtime: 80,
     startimes: [80, 70, 62],
+    besttime: 58,
     showkey: true,
     map: [
         w, w, w, w, w, w, w, w, w,

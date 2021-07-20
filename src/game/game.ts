@@ -11,6 +11,8 @@ export class Game {
     private readonly map: GameMap;
     private readonly gamelogic: Gamelogic;
 
+    private buttons: HTMLButtonElement[];
+
     constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.context = context;
@@ -26,7 +28,7 @@ export class Game {
         };
 
         this.gamelogic = new Gamelogic(this.map);
-        this.gamelogic.load(startLevel);
+        this.loadLevel(startLevel);
     }
 
     init() {
@@ -60,13 +62,22 @@ export class Game {
             `;
         }
         document.getElementById("levels").innerHTML = buttonsHtml;
+
+        this.buttons = [];
         for (let i = 0; i < levels.length; i++) {
-            let button = document.getElementById(`load${i}`);
+            let button = document.getElementById(`load${i}`) as HTMLButtonElement;
+            this.buttons.push(button);
             button.onclick = () => {
-                this.gamelogic.load(i);
+                this.loadLevel(i);
                 button.blur();
             };
         }
+    }
+
+    private loadLevel(index: number) {
+        this.buttons.forEach(button => button.style.background = "silver");
+        this.buttons[index].style.background = "gold";
+        this.gamelogic.load(index);
     }
 
     update(action: Action) {
@@ -81,7 +92,7 @@ export class Game {
             let nextLevel = this.gamelogic.hasNextLevel();
             if (nextLevel > 0) {
                 setTimeout(() => {
-                    this.gamelogic.load(nextLevel);
+                    this.loadLevel(nextLevel);
                 }, 1000);
             } else {
                 console.log("all done!");
