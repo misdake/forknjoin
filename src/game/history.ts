@@ -2,18 +2,30 @@ import {SpriteData} from "../renderer/sprite";
 import {ActionType} from "./enums";
 
 export class History {
-    root: Node;
-    current: Node;
 
-    forkStatus: string; //guide to follow the right branch when redo
+    currTime: number;
+    nodes: HistoryNode[];
 
-    init(node: HistoryNode) {
-        this.current = node;
-        this.root = node;
+    constructor(player: PlayerData, dynamic: DynamicData) { //TODO 传进来关卡刚刚初始化后的状态
+        this.currTime = 0;
+        this.nodes = [];
 
-        node.parent = null;
-        node.forkStatus = "";
-        this.forkStatus = "";
+        let t0 = new HistoryNode();
+        this.nodes[0] = t0;
+        t0.time = 0;
+        t0.players = [player];
+        t0.dynamic = dynamic;
+        t0.currIndex = 0;
+    }
+
+    setNext(time: number, node: HistoryNode) {
+        if (time !== this.currTime + 1) {
+            console.log("time不匹配");
+            debugger;
+        }
+        //TODO 看一下playerData的prev和next，是不是需要更新
+        this.nodes[time] = node;
+        this.nodes.length = time + 1;
     }
 
     getNodesByTime(time: number): HistoryNode[] {
@@ -75,33 +87,21 @@ export class History {
     }
 
     undo(callback: (node: HistoryNode) => void) {
-        if (this.current.parent) {
-            this.current = this.current.parent;
-            callback(this.current);
-        }
+        let newTime = this.currTime - 1;
+        let node = this.nodes[newTime];
+        if (!node) return;
+
+        this.currTime = newTime;
+        callback(node);
     }
 
     redo(callback: (node: HistoryNode) => void) {
-        if (this.current.fork) {
-            if (this.forkStatus.startsWith(this.current.fork.forkStatus)) {
-                this.current = this.current.fork;
-                callback(this.current);
-                return;
-            }
-        }
-        if (this.current.next) {
-            if (this.forkStatus.startsWith(this.current.next.forkStatus)) {
-                this.current = this.current.next;
-                callback(this.current);
-                return;
-            }
-        }
-        console.log("no redo!");
+
     }
 }
 
 export class PlayerData {
-    action: ActionType; //如果是none就认为是落后于当前时间线而填充的内容
+    valid: boolean;
     currentX: number;
     currentY: number;
     currentDirection: ActionType; //只允许udlr之一，用来指定上下左右图像
@@ -109,6 +109,17 @@ export class PlayerData {
     //在undo/redo时指定下一个默认currIndex。在fork和join的时候可以分开
     nextIndex: number;
     prevIndex: number;
+
+    clone() {
+        let r = new PlayerData();
+        r.valid = this.valid;
+        r.currentX = this.currentX;
+        r.currentY = this.currentY;
+        r.currentDirection = this.currentDirection;
+        r.nextIndex = this.nextIndex;
+        r.prevIndex = this.prevIndex;
+        return r;
+    }
 }
 
 export class HistoryInput {
@@ -128,7 +139,7 @@ export class HistoryInput {
         this.inputs[playerIndex].length = time + 1;
     }
 
-    getInput(time: number, playerIndex: number): ActionType {
+    private getInput(time: number, playerIndex: number): ActionType {
         let lastTime = this.getLastInputTime(playerIndex);
         if (lastTime < time) {
             return ActionType.none;
@@ -136,7 +147,7 @@ export class HistoryInput {
             return this.inputs[playerIndex][time];
         }
     }
-    getLastInputTime(playerIndex: number): number {
+    private getLastInputTime(playerIndex: number): number {
         return this.inputs[playerIndex].length - 1;
     }
     getInputs(time: number): ActionType[] {
@@ -150,30 +161,38 @@ export class HistoryInput {
 
 }
 
-export class Node {
-    time: number;
-
-    parent: Node;
-    next: Node;
-
-    currIndex: number; //当前操作的player，用switch来切换
-    players: PlayerData[];
-
-    //saved data for rendering
+export class DynamicData {
     cracks: SpriteData[];
     crateWood: SpriteData[];
     crateMetal: SpriteData[];
 
-    cloneData(action: ActionType) {
-        let b = new HistoryNode();
-        b.time = this.time;
-        b.forkStatus = this.forkStatus;
-        b.action = action;
-
-        b.player = this.player.clone();
+    clone() {
+        let b = new DynamicData();
         b.cracks = this.cracks.map(c => c.clone());
         b.crateWood = this.crateWood.map(c => c.clone());
         b.crateMetal = this.crateMetal.map(c => c.clone());
+        return b;
+    }
+}
+
+export class HistoryNode {
+    time: number;
+
+    //player status
+    currIndex: number; //当前操作的player，用switch来切换
+    players: PlayerData[];
+
+    //saved data for rendering
+    dynamic: DynamicData;
+
+    cloneData() {
+        let b = new HistoryNode();
+        b.time = this.time;
+
+        b.currIndex = this.currIndex;
+        b.players = this.players.map(player => player.clone());
+
+        b.dynamic = this.dynamic.clone();
         return b;
     }
 }
