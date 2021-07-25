@@ -113,7 +113,7 @@ export class PlayerData {
 
 export class HistoryInput {
 
-    private inputs: ActionType[][]; //inputs[playerIndex][time]
+    private readonly inputs: ActionType[][]; //inputs[playerIndex][time]
 
     constructor(playerCount: number) {
         this.inputs = [];
@@ -121,16 +121,31 @@ export class HistoryInput {
             this.inputs[i] = [];
         }
     }
-    setInput(time: number, playerIndex: number, action: ActionType) {
+    setInput(time: number, playerIndex: number, action: ActionType): void {
         //set
-        //remove later inputs (length = time?)
+        this.inputs[playerIndex][time] = action;
+        //remove later inputs
+        this.inputs[playerIndex].length = time + 1;
     }
-    getLastInputIndex(playerIndex: number) {
 
+    getInput(time: number, playerIndex: number): ActionType {
+        let lastTime = this.getLastInputTime(playerIndex);
+        if (lastTime < time) {
+            return ActionType.none;
+        } else {
+            return this.inputs[playerIndex][time];
+        }
     }
-    getInput(time: number): ActionType[] {
+    getLastInputTime(playerIndex: number): number {
+        return this.inputs[playerIndex].length - 1;
+    }
+    getInputs(time: number): ActionType[] {
+        let r: ActionType[] = [];
         //return none if lastInput < time
-
+        for (let i = 0; i < this.inputs.length; i++) {
+            r[i] = this.getInput(time, i);
+        }
+        return r;
     }
 
 }
