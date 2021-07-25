@@ -1,9 +1,9 @@
 import {SpriteData} from "../renderer/sprite";
-import {Action} from "./enums";
+import {ActionType} from "./enums";
 
 export class History {
-    root: HistoryNode;
-    current: HistoryNode;
+    root: Node;
+    current: Node;
 
     forkStatus: string; //guide to follow the right branch when redo
 
@@ -35,8 +35,8 @@ export class History {
     }
 
     forkNext() {
-        let next = this.current.cloneData(Action.fork);
-        let fork = this.current.cloneData(Action.fork);
+        let next = this.current.cloneData(ActionType.fork);
+        let fork = this.current.cloneData(ActionType.fork);
         next.time += 1;
         next.forkStatus += "n";
         fork.time += 1;
@@ -100,25 +100,56 @@ export class History {
     }
 }
 
-export class HistoryNode {
-    parent: HistoryNode;
+export class PlayerData {
+    action: ActionType; //如果是none就认为是落后于当前时间线而填充的内容
+    currentX: number;
+    currentY: number;
+    currentDirection: ActionType; //只允许udlr之一，用来指定上下左右图像
 
-    fork: HistoryNode;
-    next: HistoryNode;
-    // join: HistoryNode; //TODO
+    //在undo/redo时指定下一个默认currIndex。在fork和join的时候可以分开
+    nextIndex: number;
+    prevIndex: number;
+}
 
+export class HistoryInput {
+
+    private inputs: ActionType[][]; //inputs[playerIndex][time]
+
+    constructor(playerCount: number) {
+        this.inputs = [];
+        for (let i = 0; i < playerCount; i++) {
+            this.inputs[i] = [];
+        }
+    }
+    setInput(time: number, playerIndex: number, action: ActionType) {
+        //set
+        //remove later inputs (length = time?)
+    }
+    getLastInputIndex(playerIndex: number) {
+
+    }
+    getInput(time: number): ActionType[] {
+        //return none if lastInput < time
+
+    }
+
+}
+
+export class Node {
     time: number;
-    forkStatus: string;
 
-    action: Action;
+    parent: Node;
+    next: Node;
 
-    player: SpriteData;
+    currIndex: number; //当前操作的player，用switch来切换
+    players: PlayerData[];
+
+    //saved data for rendering
     cracks: SpriteData[];
     crateWood: SpriteData[];
     crateMetal: SpriteData[];
-    joined: Set<string> = new Set();
 
-    cloneData(action: Action) {
+    cloneData(action: ActionType) {
         let b = new HistoryNode();
         b.time = this.time;
         b.forkStatus = this.forkStatus;
@@ -128,7 +159,6 @@ export class HistoryNode {
         b.cracks = this.cracks.map(c => c.clone());
         b.crateWood = this.crateWood.map(c => c.clone());
         b.crateMetal = this.crateMetal.map(c => c.clone());
-        b.joined = new Set(this.joined);
         return b;
     }
 }

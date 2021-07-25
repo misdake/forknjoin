@@ -1,5 +1,5 @@
 import {GameMap} from "../renderer/map";
-import {Action, FORKJOIN_PLAYER_MAPPING, ImageAsset, LayerId, PLAYER_FORK_MAPPING, PLAYER_JOIN_MAPPING, SoundAsset} from "./enums";
+import {ActionType, FORKJOIN_PLAYER_MAPPING, ImageAsset, LayerId, PLAYER_FORK_MAPPING, PLAYER_JOIN_MAPPING, SoundAsset} from "./enums";
 import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
@@ -10,18 +10,26 @@ export class GameStatus {
     constructor(index: number) {
         this.index = index;
     }
-    index: number;
+
+    //level
     time: number = 0;
+    index: number; //level index
     done: boolean = false;
     soundPlayed: boolean = false;
+
+    //action
     player: Sprite = null;
     forks: { node: HistoryNode, sprite: Sprite }[] = [];
+
+    //dynamic objects
     crateWood: Sprite[] = [];
     crateMetal: Sprite[] = [];
+    cracks: Sprite[] = [];
+
+    //static objects
     targetWood: Sprite[] = [];
     targetMetal: Sprite[] = [];
     targetPlayer: Sprite[] = [];
-    cracks: Sprite[] = [];
 
     history: History = new History();
 
@@ -53,7 +61,7 @@ export class GameStatus {
         //call Gamelogic.forksMove(), use fork's parent position and apply action, overwrite fork position.
     }
 
-    toHistoryNode(action: Action): HistoryNode {
+    toHistoryNode(action: ActionType): HistoryNode {
         let node = new HistoryNode();
         node.time = this.time;
         node.forkStatus = this.forkStatus;
@@ -196,49 +204,49 @@ export class Gamelogic {
         document.getElementById("joinstatus").innerHTML = `<span${joinstatusstyle}>${joinstatus}</span>`;
     }
 
-    update(action: Action) {
+    update(action: ActionType) {
         if (this.level.done) return;
 
         //TODO fork/join
         switch (action) {
-            case Action.up:
+            case ActionType.up:
                 this.tryMove(0, -1, this.level.player);
                 this.level.player.asset = ImageAsset.player_u;
                 this.saveMove(action);
                 break;
-            case Action.down:
+            case ActionType.down:
                 this.tryMove(0, 1, this.level.player);
                 this.level.player.asset = ImageAsset.player_d;
                 this.saveMove(action);
                 break;
-            case Action.left:
+            case ActionType.left:
                 this.tryMove(-1, 0, this.level.player);
                 this.level.player.asset = ImageAsset.player_l;
                 this.saveMove(action);
                 break;
-            case Action.right:
+            case ActionType.right:
                 this.tryMove(1, 0, this.level.player);
                 this.level.player.asset = ImageAsset.player_r;
                 this.saveMove(action);
                 break;
-            case Action.idle:
+            case ActionType.idle:
                 this.saveMove(action);
                 break;
-            case Action.undo:
+            case ActionType.undo:
                 this.undo();
                 break;
-            case Action.redo:
+            case ActionType.redo:
                 this.redo();
                 break;
-            case Action.fork:
+            case ActionType.fork:
                 if (!this.level.forks.length) { //LATER allow multi-level fork
                     this.fork();
                 }
                 break;
-            case Action.join:
+            case ActionType.switch:
                 this.join();
                 break;
-            case Action.restart:
+            case ActionType.restart:
                 this.load(this.level.index);
                 break;
         }
@@ -301,7 +309,7 @@ export class Gamelogic {
             && !this.map.getSprite(x, y, LayerId.wall, LayerId.player, LayerId.crate, LayerId.crack);
     }
 
-    private saveMove(action: Action) {
+    private saveMove(action: ActionType) {
         this.level.time += 1;
 
         //run logic
@@ -398,19 +406,19 @@ export class Gamelogic {
 
             let action = f.node.action;
             switch (action) {
-                case Action.up:
+                case ActionType.up:
                     this.tryMove(0, -1, f.sprite);
                     f.sprite.asset = ImageAsset.fork_u;
                     break;
-                case Action.down:
+                case ActionType.down:
                     this.tryMove(0, 1, f.sprite);
                     f.sprite.asset = ImageAsset.fork_d;
                     break;
-                case Action.left:
+                case ActionType.left:
                     this.tryMove(-1, 0, f.sprite);
                     f.sprite.asset = ImageAsset.fork_l;
                     break;
-                case Action.right:
+                case ActionType.right:
                     this.tryMove(1, 0, f.sprite);
                     f.sprite.asset = ImageAsset.fork_r;
                     break;

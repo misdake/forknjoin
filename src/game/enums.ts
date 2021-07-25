@@ -86,20 +86,22 @@ export enum SoundAsset {
     move = "move.wav",
 }
 
-export enum Action {
+export enum ActionType {
+    none = 0,
+
+    //these are recorded
     up = 1,
     down,
     left,
     right,
     idle,
+    fork,
 
-    undo,
+    //these take effects immediately
+    switch = 10,
+    undo = 20,
     redo,
-
-    fork = 10,
-    join,
-
-    restart = 20,
+    restart,
 }
 
 export enum LayerId {

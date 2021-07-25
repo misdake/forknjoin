@@ -1,7 +1,7 @@
 import {GameMap} from "../renderer/map";
 import {H, W} from "../util";
 import {Gamelogic} from "./gamelogic";
-import {Action, ImageAsset, LayerId} from "./enums";
+import {ActionType, ImageAsset, LayerId} from "./enums";
 import {levels, startLevel} from "./levels";
 
 export class Game {
@@ -80,7 +80,7 @@ export class Game {
         this.gamelogic.load(index);
     }
 
-    update(action: Action) {
+    update(action: ActionType) {
         //move
         this.gamelogic.update(action);
 

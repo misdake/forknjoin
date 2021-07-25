@@ -1,7 +1,7 @@
 import {ImageAssets} from "./renderer/image";
 import {Game} from "./game/game";
 import {H, TILE_SIZE, W} from "./util";
-import {Action} from "./game/enums";
+import {ActionType} from "./game/enums";
 import {SoundAssets} from "./renderer/sound";
 
 let container = document.getElementById("container");
@@ -54,19 +54,19 @@ if (isTouchDevice()) {
         // @formatter:off
         let action = null;
         switch (event.key) {
-            case 'w': action = Action.up; break;
-            case 'a': action = Action.left; break;
-            case 's': action = Action.down; break;
-            case 'd': action = Action.right; break;
-            case ' ': action = Action.idle; break;
+            case 'w': action = ActionType.up; break;
+            case 'a': action = ActionType.left; break;
+            case 's': action = ActionType.down; break;
+            case 'd': action = ActionType.right; break;
+            case ' ': action = ActionType.idle; break;
 
-            case 'j': action = Action.join; break;
-            case 'k': action = Action.fork; break;
+            case 'j': action = ActionType.switch; break;
+            case 'k': action = ActionType.fork; break;
 
-            case 'z': action = Action.undo; break;
-            case 'x': action = Action.redo; break;
+            case 'z': action = ActionType.undo; break;
+            case 'x': action = ActionType.redo; break;
 
-            case 'r': action = Action.restart; break;
+            case 'r': action = ActionType.restart; break;
         }
         // @formatter:on
 
