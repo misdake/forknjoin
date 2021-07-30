@@ -109,7 +109,6 @@ export enum LayerId {
     crack,
     crate,
     target,
-    fork,
     player,
     wall
 }

@@ -1,86 +1,20 @@
 import {GameMap} from "../renderer/map";
 import {ActionType, FORKJOIN_PLAYER_MAPPING, ImageAsset, LayerId, PLAYER_FORK_MAPPING, PLAYER_JOIN_MAPPING, SoundAsset} from "./enums";
-import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, levels} from "./levels";
+import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, Level, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 import {SoundAssets} from "../renderer/sound";
 import {History, HistoryNode} from "./history";
-
-export class GameStatus {
-    constructor(index: number) {
-        this.index = index;
-    }
-
-    //level
-    time: number = 0;
-    index: number; //level index
-    done: boolean = false;
-    soundPlayed: boolean = false;
-
-    //action
-    player: Sprite = null;
-    forks: { node: HistoryNode, sprite: Sprite }[] = [];
-
-    //dynamic objects
-    crateWood: Sprite[] = [];
-    crateMetal: Sprite[] = [];
-    cracks: Sprite[] = [];
-
-    //static objects
-    targetWood: Sprite[] = [];
-    targetMetal: Sprite[] = [];
-    targetPlayer: Sprite[] = [];
-
-    history: History = new History();
-
-    forkStatus: string = "";
-    joined: Set<string> = new Set();
-
-    fromHistoryNode(node: HistoryNode, map: GameMap, gamelogic: Gamelogic) {
-        this.time = node.time;
-        this.forkStatus = node.forkStatus;
-        this.joined = new Set(node.joined);
-
-        map.clearMovable();
-        this.player = map.getLayer(LayerId.player).createSpriteWithData(node.player);
-        if (gamelogic.isJoin()) {
-            this.player.asset = PLAYER_JOIN_MAPPING.get(this.player.asset);
-        } else if (gamelogic.isFork()) {
-            this.player.asset = PLAYER_FORK_MAPPING.get(this.player.asset);
-        }
-
-        this.cracks = node.cracks.map(crate => map.getLayer(LayerId.crack).createSpriteWithData(crate));
-        this.crateWood = node.crateWood.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
-        this.crateMetal = node.crateMetal.map(crate => map.getLayer(LayerId.crate).createSpriteWithData(crate));
-
-        let forks = this.history.getNodesByTime(node.time);
-        this.forks = forks.filter(i => i !== node && !this.joined.has(i.forkStatus)).map(node => {
-            //create sprite with parent to let it move
-            return {node, sprite: map.getLayer(LayerId.fork).createSpriteWithData(node.parent.player)};
-        });
-        //call Gamelogic.forksMove(), use fork's parent position and apply action, overwrite fork position.
-    }
-
-    toHistoryNode(action: ActionType): HistoryNode {
-        let node = new HistoryNode();
-        node.time = this.time;
-        node.forkStatus = this.forkStatus;
-        node.action = action;
-        node.player = this.player.toData();
-        node.cracks = this.cracks.map(crack => crack.toData());
-        node.crateWood = this.crateWood.map(crate => crate.toData());
-        node.crateMetal = this.crateMetal.map(crate => crate.toData());
-        node.joined = new Set(this.joined);
-        return node;
-    }
-}
 
 let opacityTimeout: number = null;
 
 export class Gamelogic {
     private readonly map: GameMap;
 
-    private level: GameStatus;
+    private level: Level;
+    private done: boolean = false;
+    private soundPlayed: boolean = false;
+    private history: History;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -88,7 +22,7 @@ export class Gamelogic {
 
     hasNextLevel() {
         if (this.level) {
-            let nextIndex = this.level.index + 1;
+            let nextIndex = levels.indexOf(this.level) + 1;
             if (levels[nextIndex]) {
                 return nextIndex;
             }
@@ -103,8 +37,6 @@ export class Gamelogic {
         document.getElementById("joinhint").style.display = "none";
 
         let levelData = levels[index];
-
-        this.level = new GameStatus(index);
 
         if (levelData.map.length !== W * H) {
             console.log("map size doesn't match!");

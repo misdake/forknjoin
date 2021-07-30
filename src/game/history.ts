@@ -1,129 +1,7 @@
 import {SpriteData} from "../renderer/sprite";
 import {ActionType} from "./enums";
 
-export class History {
-
-    currTime: number;
-    nodes: HistoryNode[];
-
-    constructor(player: PlayerData, dynamic: DynamicData) { //TODO 传进来关卡刚刚初始化后的状态
-        this.currTime = 0;
-        this.nodes = [];
-
-        let t0 = new HistoryNode();
-        this.nodes[0] = t0;
-        t0.time = 0;
-        t0.players = [player];
-        t0.dynamic = dynamic;
-        t0.currIndex = 0;
-    }
-
-    setNext(time: number, node: HistoryNode) {
-        if (time !== this.currTime + 1) {
-            console.log("time不匹配");
-            debugger;
-        }
-        //TODO 看一下playerData的prev和next，是不是需要更新
-        this.nodes[time] = node;
-        this.nodes.length = time + 1;
-    }
-
-    getNodesByTime(time: number): HistoryNode[] {
-        return this.visit(this.root, (node: HistoryNode) => node.time === time || (node.time < time && !node.next), []);
-    }
-    private visit(current: HistoryNode, pred: (node: HistoryNode) => boolean, result: HistoryNode[]): HistoryNode[] {
-        if (pred(current)) {
-            result.push(current);
-        }
-        if (current.next) this.visit(current.next, pred, result);
-        if (current.fork) this.visit(current.fork, pred, result);
-        return result;
-    }
-
-    writeNext(node: HistoryNode) {
-        this.current.next = node;
-        node.parent = this.current;
-        this.forkStatus = node.forkStatus;
-    }
-
-    forkNext() {
-        let next = this.current.cloneData(ActionType.fork);
-        let fork = this.current.cloneData(ActionType.fork);
-        next.time += 1;
-        next.forkStatus += "n";
-        fork.time += 1;
-        fork.forkStatus += "f";
-        this.current.next = next;
-        this.current.fork = fork;
-        next.parent = this.current;
-        fork.parent = this.current;
-        this.forkStatus = fork.forkStatus;
-    }
-
-    private static findParent(from: HistoryNode, pred: (node: HistoryNode) => boolean): HistoryNode {
-        while (!pred(from) && from.parent) {
-            from = from.parent;
-        }
-        return pred(from) ? from : null;
-    }
-    backToForkNext(callback: (node: HistoryNode) => void) {
-        let s = this.current.forkStatus;
-        while (s.length > 0 && s.charAt(s.length - 1) === 'n') {
-            s = s.substring(0, s.length - 1);
-        }
-        if (s.length === 0) {
-            console.log("no valid parent");
-            return;
-        }
-        let targetStatus = s.substring(0, s.length - 1);
-        let next = History.findParent(this.current, node => node.forkStatus === targetStatus);
-        next = next.next;
-        console.log(`look for status: ${this.current.forkStatus}=>${targetStatus}, result:`, next);
-        if (next) {
-            this.current = next;
-            this.forkStatus = this.current.forkStatus;
-            callback(this.current);
-        }
-    }
-
-    undo(callback: (node: HistoryNode) => void) {
-        let newTime = this.currTime - 1;
-        let node = this.nodes[newTime];
-        if (!node) return;
-
-        this.currTime = newTime;
-        callback(node);
-    }
-
-    redo(callback: (node: HistoryNode) => void) {
-
-    }
-}
-
-export class PlayerData {
-    valid: boolean;
-    currentX: number;
-    currentY: number;
-    currentDirection: ActionType; //只允许udlr之一，用来指定上下左右图像
-
-    //在undo/redo时指定下一个默认currIndex。在fork和join的时候可以分开
-    nextIndex: number;
-    prevIndex: number;
-
-    clone() {
-        let r = new PlayerData();
-        r.valid = this.valid;
-        r.currentX = this.currentX;
-        r.currentY = this.currentY;
-        r.currentDirection = this.currentDirection;
-        r.nextIndex = this.nextIndex;
-        r.prevIndex = this.prevIndex;
-        return r;
-    }
-}
-
 export class HistoryInput {
-
     private readonly inputs: ActionType[][]; //inputs[playerIndex][time]
 
     constructor(playerCount: number) {
@@ -158,13 +36,112 @@ export class HistoryInput {
         }
         return r;
     }
+}
 
+export class History {
+
+    currTime: number;
+    nodes: HistoryNode[];
+
+    constructor(player: PlayerData, dynamic: DynamicData) { //TODO 传进来关卡刚刚初始化后的状态
+        this.currTime = 0;
+        this.nodes = [];
+
+        let t0 = new HistoryNode();
+        this.nodes[0] = t0;
+        t0.time = 0;
+        t0.players = [player];
+        t0.dynamic = dynamic;
+        t0.currIndex = 0;
+    }
+
+    setNext(time: number, node: HistoryNode) {
+        if (time !== this.currTime + 1) {
+            console.log("time不匹配");
+            debugger;
+        }
+        //TODO 看一下playerData的prev和next，是不是需要更新
+        this.nodes[time] = node;
+        this.nodes.length = time + 1;
+    }
+
+    undo(callback: (node: HistoryNode) => void) {
+        let newTime = this.currTime - 1;
+        let node = this.nodes[newTime];
+        if (!node) {
+            console.log("no prev state");
+            debugger;
+            return;
+        }
+
+        this.currTime = newTime;
+        callback(node);
+    }
+
+    redo(callback: (node: HistoryNode) => void) {
+        let newTime = this.currTime + 1;
+        let node = this.nodes[newTime];
+        if (!node) {
+            console.log("no next state");
+            debugger;
+            return;
+        }
+
+        this.currTime = newTime;
+        //TODO currIndex
+        callback(node);
+    }
+}
+
+export class PlayerData {
+    index: number;
+    x: number;
+    y: number;
+    direction: ActionType; //只允许udlr之一，用来指定上下左右图像
+
+    //在undo/redo时指定下一个默认currIndex。在fork和join的时候可以分开
+    prevIndex: number;
+    // nextIndex: number; //redo时尝试通过
+
+    static init(index: number, x: number, y: number) {
+        let player = new PlayerData();
+        player.index = index;
+        player.x = x;
+        player.y = y;
+        player.direction = ActionType.down;
+        player.nextIndex
+    }
+
+    clone() {
+        let r = new PlayerData();
+        r.index = this.index;
+        r.x = this.x;
+        r.y = this.y;
+        r.direction = this.direction;
+        r.nextIndex = this.nextIndex;
+        r.prevIndex = this.prevIndex;
+        return r;
+    }
+}
+
+export class StaticData {
+    targetWood: SpriteData[] = [];
+    targetMetal: SpriteData[] = [];
+    targetPlayer: SpriteData[] = [];
+
+    clone() {
+        let b = new StaticData();
+        b.targetWood = this.targetWood.map(c => c.clone());
+        b.targetMetal = this.targetMetal.map(c => c.clone());
+        b.targetPlayer = this.targetPlayer.map(c => c.clone());
+        return b;
+    }
 }
 
 export class DynamicData {
-    cracks: SpriteData[];
-    crateWood: SpriteData[];
-    crateMetal: SpriteData[];
+    cracks: SpriteData[] = [];
+    crateWood: SpriteData[] = [];
+    crateMetal: SpriteData[] = [];
 
     clone() {
         let b = new DynamicData();
@@ -194,5 +171,16 @@ export class HistoryNode {
 
         b.dynamic = this.dynamic.clone();
         return b;
+    }
+
+    static fromLevel() : HistoryNode {
+        let r = new HistoryNode();
+        r.time = 0;
+        r.players = [];
+        r.currIndex = 0;
+        r.dynamic = new DynamicData();
+        r.dynamic.cracks = [];
+        r.dynamic.crateWood = [];
+        r.dynamic.crateMetal = [];
     }
 }
