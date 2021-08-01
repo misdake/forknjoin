@@ -6,6 +6,14 @@ export class SpriteData {
     y: number;
     asset: ImageAsset;
 
+    static create(x: number, y: number, asset: ImageAsset) {
+        let r = new SpriteData;
+        r.x = x;
+        r.y = y;
+        r.asset = asset;
+        return r;
+    }
+
     clone() {
         let d = new SpriteData();
         d.x = this.x;

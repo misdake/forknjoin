@@ -19,15 +19,6 @@ CELL_IMAGE_MAPPING[Y] = ImageAsset.target_metal_1;
 CELL_IMAGE_MAPPING[Z] = ImageAsset.target_player_1;
 CELL_IMAGE_MAPPING[c] = ImageAsset.crack_1;
 CELL_IMAGE_MAPPING[w] = ImageAsset.wall;
-export const CELL_LAYER_MAPPING: LayerId[] = [];
-CELL_LAYER_MAPPING[P] = LayerId.player;
-CELL_LAYER_MAPPING[U] = LayerId.crate;
-CELL_LAYER_MAPPING[V] = LayerId.crate;
-CELL_LAYER_MAPPING[X] = LayerId.target;
-CELL_LAYER_MAPPING[Y] = LayerId.target;
-CELL_LAYER_MAPPING[Z] = LayerId.target;
-CELL_LAYER_MAPPING[c] = LayerId.crack;
-CELL_LAYER_MAPPING[w] = LayerId.wall;
 
 // noinspection JSUnusedGlobalSymbols
 export const ALL_CELL_TYPES = [P, U, V, X, Y, o, w];

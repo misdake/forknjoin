@@ -1,127 +1,84 @@
-import {SpriteData} from "../renderer/sprite";
 import {ActionType} from "./enums";
+import {SpriteData} from "../renderer/sprite";
 
-export class HistoryInput {
-    private readonly inputs: ActionType[][]; //inputs[playerIndex][time]
+export class History {
+    actionRoot: ActionNode;
+    states: StateNode[]; //states[time]
 
-    constructor(playerCount: number) {
-        this.inputs = [];
-        for (let i = 0; i < playerCount; i++) {
-            this.inputs[i] = [];
-        }
-    }
-    setInput(time: number, playerIndex: number, action: ActionType): void {
-        //set
-        this.inputs[playerIndex][time] = action;
-        //remove later inputs
-        this.inputs[playerIndex].length = time + 1;
-    }
+    curr: ActionNode;
 
-    private getInput(time: number, playerIndex: number): ActionType {
-        let lastTime = this.getLastInputTime(playerIndex);
-        if (lastTime < time) {
-            return ActionType.none;
-        } else {
-            return this.inputs[playerIndex][time];
-        }
-    }
-    private getLastInputTime(playerIndex: number): number {
-        return this.inputs[playerIndex].length - 1;
-    }
-    getInputs(time: number): ActionType[] {
-        let r: ActionType[] = [];
-        //return none if lastInput < time
-        for (let i = 0; i < this.inputs.length; i++) {
-            r[i] = this.getInput(time, i);
-        }
+    getActions(time: number): ActionNode[] {
+        let r : ActionNode[] = [];
+        this.actionRoot.visitChildren(node => {
+            if (node.time === time) {
+                r.push(node);
+            }
+            return node.time < time;
+        });
         return r;
+    }
+
+    appendState(node: StateNode) { //TODO 感觉最好分开传进来，actionNode的连接放进来
+        let time = this.curr.time + 1;
+        this.states[time] = node;
+        this.redo();
+    }
+
+    undo() {
+
+    }
+    redo() {
+
     }
 }
 
-export class History {
 
-    currTime: number;
-    nodes: HistoryNode[];
+let actionNodeId = 1;
 
-    constructor(player: PlayerData, dynamic: DynamicData) { //TODO 传进来关卡刚刚初始化后的状态
-        this.currTime = 0;
-        this.nodes = [];
+export class ActionNode {
+    readonly time: number;
+    readonly id: number;
+    readonly action: ActionType;
 
-        let t0 = new HistoryNode();
-        this.nodes[0] = t0;
-        t0.time = 0;
-        t0.players = [player];
-        t0.dynamic = dynamic;
-        t0.currIndex = 0;
+    //connectivity
+    readonly nextNodes: ActionNode[];
+
+    //saves last node movement for undo/redo
+    prevNode: ActionNode;
+    nextNode: ActionNode;
+
+    constructor(time: number, action: ActionType, prevNode: ActionNode) {
+        this.time = time;
+        this.id = actionNodeId++;
+        this.action = action;
+
+        this.nextNodes = [];
+        this.prevNode = prevNode;
+        this.nextNode = null;
     }
 
-    setNext(time: number, node: HistoryNode) {
-        if (time !== this.currTime + 1) {
-            console.log("time不匹配");
-            debugger;
+    visitChildren(callback: (node: ActionNode) => boolean): void {
+        let callChildren = callback(this);
+        if (callChildren) {
+            for (let node of this.nextNodes) {
+                node.visitChildren(callback);
+            }
         }
-        //TODO 看一下playerData的prev和next，是不是需要更新
-        this.nodes[time] = node;
-        this.nodes.length = time + 1;
     }
 
-    undo(callback: (node: HistoryNode) => void) {
-        let newTime = this.currTime - 1;
-        let node = this.nodes[newTime];
-        if (!node) {
-            console.log("no prev state");
-            debugger;
-            return;
-        }
-
-        this.currTime = newTime;
-        callback(node);
+    goPrev(log: boolean = true): ActionNode {
+        if (log && this.prevNode) this.prevNode.nextNode = this;
+        return this.prevNode;
     }
-
-    redo(callback: (node: HistoryNode) => void) {
-        let newTime = this.currTime + 1;
-        let node = this.nodes[newTime];
-        if (!node) {
-            console.log("no next state");
-            debugger;
-            return;
-        }
-
-        this.currTime = newTime;
-        //TODO currIndex
-        callback(node);
+    goNext(log: boolean = true): ActionNode {
+        if (log && this.nextNode) this.nextNode.prevNode = this;
+        return this.prevNode;
     }
 }
 
 export class PlayerData {
-    index: number;
-    x: number;
-    y: number;
-    direction: ActionType; //只允许udlr之一，用来指定上下左右图像
-
-    //在undo/redo时指定下一个默认currIndex。在fork和join的时候可以分开
-    prevIndex: number;
-    // nextIndex: number; //redo时尝试通过
-
-    static init(index: number, x: number, y: number) {
-        let player = new PlayerData();
-        player.index = index;
-        player.x = x;
-        player.y = y;
-        player.direction = ActionType.down;
-        player.nextIndex
-    }
-
-    clone() {
-        let r = new PlayerData();
-        r.index = this.index;
-        r.x = this.x;
-        r.y = this.y;
-        r.direction = this.direction;
-        r.nextIndex = this.nextIndex;
-        r.prevIndex = this.prevIndex;
-        return r;
-    }
+    id: number;
+    spriteData: SpriteData;
 }
 
 export class StaticData {
@@ -152,35 +109,9 @@ export class DynamicData {
     }
 }
 
-export class HistoryNode {
+export class StateNode {
     time: number;
-
-    //player status
-    currIndex: number; //当前操作的player，用switch来切换
-    players: PlayerData[];
-
-    //saved data for rendering
-    dynamic: DynamicData;
-
-    cloneData() {
-        let b = new HistoryNode();
-        b.time = this.time;
-
-        b.currIndex = this.currIndex;
-        b.players = this.players.map(player => player.clone());
-
-        b.dynamic = this.dynamic.clone();
-        return b;
-    }
-
-    static fromLevel() : HistoryNode {
-        let r = new HistoryNode();
-        r.time = 0;
-        r.players = [];
-        r.currIndex = 0;
-        r.dynamic = new DynamicData();
-        r.dynamic.cracks = [];
-        r.dynamic.crateWood = [];
-        r.dynamic.crateMetal = [];
-    }
+    player: PlayerData[];
+    dynamicData: DynamicData;
+    staticData: StaticData;
 }

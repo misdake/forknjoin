@@ -4,13 +4,15 @@ import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, Level, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 import {SoundAssets} from "../renderer/sound";
-import {History, HistoryNode} from "./history";
+import {History} from "./history";
+import {loadLevelToData} from "./loader";
 
 let opacityTimeout: number = null;
 
 export class Gamelogic {
     private readonly map: GameMap;
 
+    private levelIndex: number;
     private level: Level;
     private done: boolean = false;
     private soundPlayed: boolean = false;
@@ -36,60 +38,24 @@ export class Gamelogic {
         document.getElementById("timehint").style.display = "none";
         document.getElementById("joinhint").style.display = "none";
 
-        let levelData = levels[index];
+        this.levelIndex = index;
+        this.level = levels[index];
 
-        if (levelData.map.length !== W * H) {
+        if (this.level.map.length !== W * H) {
             console.log("map size doesn't match!");
             debugger;
         }
 
         document.getElementById("titlehint").style.opacity = "1.0";
-        document.getElementById("title").innerHTML = levelData.name;
-        document.getElementById("showkey1").style.display = levelData.showkey ? "block" : "none";
-        document.getElementById("showkey2").style.display = levelData.showkey ? "block" : "none";
+        document.getElementById("title").innerHTML = this.level.name;
+        document.getElementById("showkey1").style.display = this.level.showkey ? "block" : "none";
+        document.getElementById("showkey2").style.display = this.level.showkey ? "block" : "none";
         if (opacityTimeout) clearTimeout(opacityTimeout);
         opacityTimeout = setTimeout(() => document.getElementById("titlehint").style.opacity = "0.0", 2000);
 
         this.map.clearLayers();
 
-        for (let j = 0; j < H; j++) {
-            for (let i = 0; i < W; i++) {
-                let index = i + j * W;
-                let cell = levelData.map[index];
-                let layerId = CELL_LAYER_MAPPING[cell];
-                let image = CELL_IMAGE_MAPPING[cell];
-                if (layerId && image) {
-                    let layer = this.map.getLayer(layerId);
-                    let sprite = layer.createSprite(i, j, image);
-
-                    switch (image) {
-                        case ImageAsset.player_d:
-                            this.level.player = sprite;
-                            break;
-                        case ImageAsset.crate_wood:
-                            this.level.crateWood.push(sprite);
-                            break;
-                        case ImageAsset.crate_metal:
-                            this.level.crateMetal.push(sprite);
-                            break;
-                        case ImageAsset.target_wood_1:
-                            this.level.targetWood.push(sprite);
-                            break;
-                        case ImageAsset.target_metal_1:
-                            this.level.targetMetal.push(sprite);
-                            break;
-                        case ImageAsset.target_player_1:
-                            this.level.targetPlayer.push(sprite);
-                            break;
-                        case ImageAsset.crack_1:
-                            this.level.cracks.push(sprite);
-                            break;
-                    }
-                }
-            }
-        }
-
-        this.level.history.init(this.level.toHistoryNode(null));
+        loadLevelToData(this.level);
 
         this.check();
 
@@ -100,8 +66,8 @@ export class Gamelogic {
 
     updateUi() {
         document.getElementById("currentlevel").innerHTML = `${this.level.index + 1}. ${levels[this.level.index].name}`;
-        let maxtime = levels[this.level.index].maxtime;
-        let currenttime = this.level.time;
+        let maxtime = this.level.maxtime;
+        let currenttime = this.history.curr.time;
         let maxtimestyle = "";
 
         if (currenttime > maxtime && maxtime > 0) {
