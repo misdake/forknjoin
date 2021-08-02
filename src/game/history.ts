@@ -2,33 +2,36 @@ import {ActionType} from "./enums";
 import {SpriteData} from "../renderer/sprite";
 
 export class History {
-    actionRoot: ActionNode;
-    states: StateNode[]; //states[time]
-
-    curr: ActionNode;
-
-    getActions(time: number): ActionNode[] {
-        let r : ActionNode[] = [];
-        this.actionRoot.visitChildren(node => {
-            if (node.time === time) {
-                r.push(node);
-            }
-            return node.time < time;
-        });
-        return r;
+    private onApply: (state: StateNode) => void;
+    constructor(onApply: (state: StateNode) => void) {
+        this.onApply = onApply;
     }
 
-    appendState(node: StateNode) { //TODO 感觉最好分开传进来，actionNode的连接放进来
-        let time = this.curr.time + 1;
+    time: number;
+
+    states: StateNode[]; //states[time]
+    initState(node: StateNode) {
+        this.states = [node];
+        this.time = 0;
+        this.redo();
+    }
+    applyNextState(node: StateNode) { //TODO 感觉最好分开传进来，actionNode的连接放进来
+        let time = node.time;
         this.states[time] = node;
         this.redo();
     }
 
     undo() {
-
+        if (this.states[this.time - 1]) {
+            this.time++;
+            this.onApply(this.states[this.time]);
+        }
     }
     redo() {
-
+        if (this.states[this.time + 1]) {
+            this.time++;
+            this.onApply(this.states[this.time]);
+        }
     }
 }
 
@@ -111,7 +114,7 @@ export class DynamicData {
 
 export class StateNode {
     time: number;
-    player: PlayerData[];
+    players: PlayerData[];
     dynamicData: DynamicData;
     staticData: StaticData;
 }

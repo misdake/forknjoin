@@ -1,11 +1,11 @@
 import {GameMap} from "../renderer/map";
 import {ActionType, FORKJOIN_PLAYER_MAPPING, ImageAsset, LayerId, PLAYER_FORK_MAPPING, PLAYER_JOIN_MAPPING, SoundAsset} from "./enums";
-import {CELL_IMAGE_MAPPING, CELL_LAYER_MAPPING, Level, levels} from "./levels";
+import {Level, levels} from "./levels";
 import {H, W} from "../util";
 import {Sprite} from "../renderer/sprite";
 import {SoundAssets} from "../renderer/sound";
-import {History} from "./history";
-import {loadLevelToData} from "./loader";
+import {ActionNode, History, StateNode} from "./history";
+import {ForkJoinMode, GameMode} from "./gamemode";
 
 let opacityTimeout: number = null;
 
@@ -16,7 +16,11 @@ export class Gamelogic {
     private level: Level;
     private done: boolean = false;
     private soundPlayed: boolean = false;
+
     private history: History;
+    private actions: ActionNode[];
+    private actionCurr: ActionNode;
+    private gameMode: GameMode;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -55,13 +59,35 @@ export class Gamelogic {
 
         this.map.clearLayers();
 
-        loadLevelToData(this.level);
+        this.gameMode = new ForkJoinMode();
+        let state = this.gameMode.initState(this.level);
+        this.history = new History(state=> this.applyState(state)); //TODO 传入(state)=>this.applyState(state); 这样就无忧更新了
+        this.actions = this.gameMode.initActions(this.level, state);
+        this.actionCurr = this.actions[0]; //TODO 是否会需要指定？
+        this.history.initState(state);
 
         this.check();
 
         this.map.draw();
 
         this.updateUi();
+    }
+
+    private applyState(state: StateNode) {
+        //TODO
+    }
+    private getActions(time: number): ActionNode[] {
+        let r: ActionNode[] = [];
+        this.actions.forEach(root => root.visitChildren(node => {
+            if (node.time === time) {
+                r.push(node);
+            }
+            return node.time < time;
+        }));
+        return r;
+    }
+    private doAction(action: ActionType) {
+        //TODO 拿到当前actionNode，新建节点
     }
 
     updateUi() {
