@@ -20,6 +20,9 @@ export class History {
         this.states[time] = node;
         this.redo();
     }
+    getState() {
+        return this.states[this.time];
+    }
 
     undo() {
         if (this.states[this.time - 1]) {

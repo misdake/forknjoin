@@ -1,4 +1,4 @@
-import {ActionNode, DynamicData, PlayerData, StateNode, StaticData} from "./history";
+import {ActionNode, StateNode} from "./history";
 import {ActionType} from "./enums";
 import {Level} from "./levels";
 import {SpriteData} from "../renderer/sprite";
@@ -20,10 +20,11 @@ export abstract class GameMode {
     }
 
     initActions(level: Level, state: StateNode) : ActionNode[] {
-
+        let r = state.players.map(_ => new ActionNode(0, ActionType.none, null));
+        return r;
     }
 
-    abstract tick(action: ActionType, prev: StateNode): StateNode;
+    abstract tick(actions: ActionNode[], prev: StateNode): StateNode;
 
     check(node: StateNode): boolean {
         let player1 = this.check1(node.staticData.targetPlayer, node.players.map(p => p.spriteData));
@@ -44,7 +45,8 @@ export abstract class GameMode {
 
 export class ForkJoinMode extends GameMode {
 
-    tick(action: ActionType, prev: StateNode): StateNode {
+    tick(actions: ActionNode[], prev: StateNode): StateNode {
+        console.log("tick", actions, prev);
         return undefined;
     }
 
