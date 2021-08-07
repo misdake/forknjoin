@@ -38,27 +38,24 @@ export class History {
     }
 }
 
-
-let actionNodeId = 1;
-
 export class ActionNode {
     readonly time: number;
     readonly id: number;
     readonly action: ActionType;
 
     //connectivity
-    readonly nextNodes: ActionNode[];
+    nextNodes: ActionNode[];
 
     //saves last node movement for undo/redo
     prevNode: ActionNode;
     nextNode: ActionNode;
 
-    constructor(time: number, action: ActionType, prevNode: ActionNode) {
+    constructor(time: number, id: number, action: ActionType, prevNode: ActionNode) {
         this.time = time;
-        this.id = actionNodeId++;
+        this.id = id;
         this.action = action;
 
-        this.nextNodes = [];
+        this.nextNodes = null;
         this.prevNode = prevNode;
         this.nextNode = null;
     }
@@ -66,7 +63,7 @@ export class ActionNode {
     visitChildren(callback: (node: ActionNode) => boolean): void {
         let callChildren = callback(this);
         if (callChildren) {
-            for (let node of this.nextNodes) {
+            if (this.nextNodes) for (let node of this.nextNodes) {
                 node.visitChildren(callback);
             }
         }
@@ -85,6 +82,13 @@ export class ActionNode {
 export class PlayerData {
     id: number;
     spriteData: SpriteData;
+
+    clone() {
+        let r = new PlayerData();
+        r.id = this.id;
+        r.spriteData = this.spriteData.clone();
+        return r
+    }
 }
 
 export class StaticData {
@@ -113,4 +117,8 @@ export class StateNode {
     players: PlayerData[];
     dynamicData: DynamicData;
     staticData: StaticData;
+
+    constructor(time: number) {
+        this.time = time;
+    }
 }

@@ -19,7 +19,7 @@ export function loadLevelToData(level: Level): { dynamicData: DynamicData, stati
                 switch (image) {
                     case ImageAsset.player_d: {
                         let p = new PlayerData();
-                        p.id = -players.length - 1; //TODO 看看这个怎么初始化
+                        p.id = players.length + 1;
                         p.spriteData = sprite;
                         players.push(p);
                         break;

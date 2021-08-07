@@ -10,8 +10,8 @@ export abstract class GameMode {
      * @param level
      */
     initState(level: Level): StateNode {
-        let { dynamicData, staticData, players } = loadLevelToData(level);
-        let r = new StateNode();
+        let {dynamicData, staticData, players} = loadLevelToData(level);
+        let r = new StateNode(0);
         r.time = 0;
         r.staticData = staticData;
         r.dynamicData = dynamicData;
@@ -20,7 +20,7 @@ export abstract class GameMode {
     }
 
     initActions(level: Level, state: StateNode) : ActionNode[] {
-        let r = state.players.map(_ => new ActionNode(0, ActionType.none, null));
+        let r = state.players.map((v, i) => new ActionNode(0, v.id, ActionType.none, null));
         return r;
     }
 
@@ -43,15 +43,3 @@ export abstract class GameMode {
     }
 }
 
-export class ForkJoinMode extends GameMode {
-
-    tick(actions: ActionNode[], prev: StateNode): StateNode {
-        console.log("tick", actions, prev);
-
-        
-
-
-        return undefined;
-    }
-
-}

@@ -4,8 +4,9 @@ import {Level, levels} from "./levels";
 import {H, W} from "../util";
 import {SoundAssets} from "../renderer/sound";
 import {ActionNode, History, StateNode} from "./history";
-import {ForkJoinMode, GameMode} from "./gamemode";
+import {GameMode} from "./gamemode";
 import {SpriteData} from "../renderer/sprite";
+import {ForkJoinMode} from "./gamemodes/forkjoin";
 
 let opacityTimeout: number = null;
 
@@ -132,14 +133,21 @@ export class Gamelogic {
     update(action: ActionType) {
         if (this.done) return;
         let time = this.history.time;
-        //TODO 新建actionNode，新建节点写到action里
+        let newTime = time + 1;
+
+        console.log(this.actionCurr);
+        let newAction = new ActionNode(newTime, this.actionCurr.id, action, this.actionCurr);
+        this.actionCurr.nextNodes = [newAction];
+        this.actionCurr.nextNode = newAction;
+        newAction.prevNode = this.actionCurr;
 
         //TODO 设置actionCurr
 
-        let actions = this.getActions(time);
+        let actions = this.getActions(newTime);
         let newState = this.gameMode.tick(actions, this.history.getState());
 
         this.history.applyNextState(newState);
+        this.actionCurr = newAction;
 
         // switch (action) {
         //     case ActionType.up:
