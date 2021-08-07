@@ -42,6 +42,9 @@ export function loadLevelToData(level: Level): { dynamicData: DynamicData, stati
                     case ImageAsset.target_player_1:
                         staticData.targetPlayer.push(sprite);
                         break;
+                    case ImageAsset.wall:
+                        staticData.targetWall.push(sprite);
+                        break;
                 }
             }
         }

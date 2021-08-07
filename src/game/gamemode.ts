@@ -47,6 +47,10 @@ export class ForkJoinMode extends GameMode {
 
     tick(actions: ActionNode[], prev: StateNode): StateNode {
         console.log("tick", actions, prev);
+
+        
+
+
         return undefined;
     }
 

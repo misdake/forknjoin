@@ -91,14 +91,7 @@ export class StaticData {
     targetWood: SpriteData[] = [];
     targetMetal: SpriteData[] = [];
     targetPlayer: SpriteData[] = [];
-
-    clone() {
-        let b = new StaticData();
-        b.targetWood = this.targetWood.map(c => c.clone());
-        b.targetMetal = this.targetMetal.map(c => c.clone());
-        b.targetPlayer = this.targetPlayer.map(c => c.clone());
-        return b;
-    }
+    targetWall: SpriteData[] = [];
 }
 
 export class DynamicData {
