@@ -6,7 +6,7 @@ import {SoundAssets} from "../renderer/sound";
 import {ActionNode, History, StateNode} from "./history";
 import {GameMode} from "./gamemode";
 import {SpriteData} from "../renderer/sprite";
-import {ForkJoinMode} from "./gamemodes/forkjoin";
+import {NormalMode} from "./gamemodes/normal";
 
 let opacityTimeout: number = null;
 
@@ -60,7 +60,8 @@ export class Gamelogic {
 
         this.map.clearLayers();
 
-        this.gameMode = new ForkJoinMode();
+        // this.gameMode = new ForkJoinMode();
+        this.gameMode = new NormalMode();
         let state = this.gameMode.initState(this.level);
 
         this.applyStatic(state);
@@ -95,7 +96,7 @@ export class Gamelogic {
         this.addAllSprites(LayerId.target, state.staticData.targetMetal);
         this.addAllSprites(LayerId.target, state.staticData.targetWood);
         this.addAllSprites(LayerId.target, state.staticData.targetPlayer);
-        this.addAllSprites(LayerId.target, state.staticData.targetWall);
+        this.addAllSprites(LayerId.target, state.staticData.wall);
     }
     private getActions(time: number): ActionNode[] {
         let r: ActionNode[] = [];
@@ -140,8 +141,6 @@ export class Gamelogic {
         this.actionCurr.nextNodes = [newAction];
         this.actionCurr.nextNode = newAction;
         newAction.prevNode = this.actionCurr;
-
-        //TODO 设置actionCurr
 
         let actions = this.getActions(newTime);
         let newState = this.gameMode.tick(actions, this.history.getState());

@@ -1,5 +1,6 @@
 import {ActionType} from "./enums";
 import {SpriteData} from "../renderer/sprite";
+import {LogicMap} from "./gamemodes/util";
 
 export class History {
     private onApply: (state: StateNode) => void;
@@ -95,7 +96,9 @@ export class StaticData {
     targetWood: SpriteData[] = [];
     targetMetal: SpriteData[] = [];
     targetPlayer: SpriteData[] = [];
-    targetWall: SpriteData[] = [];
+    wall: SpriteData[] = [];
+
+    map: LogicMap;
 }
 
 export class DynamicData {

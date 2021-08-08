@@ -3,6 +3,7 @@ import {DynamicData, PlayerData, StaticData} from "./history";
 import {H, W} from "../util";
 import {ImageAsset} from "./enums";
 import {SpriteData} from "../renderer/sprite";
+import {mapFromStatic} from "./gamemodes/util";
 
 export function loadLevelToData(level: Level): { dynamicData: DynamicData, staticData: StaticData, players: PlayerData[] } {
     let dynamicData = new DynamicData();
@@ -43,12 +44,14 @@ export function loadLevelToData(level: Level): { dynamicData: DynamicData, stati
                         staticData.targetPlayer.push(sprite);
                         break;
                     case ImageAsset.wall:
-                        staticData.targetWall.push(sprite);
+                        staticData.wall.push(sprite);
                         break;
                 }
             }
         }
     }
+
+    staticData.map = mapFromStatic(staticData);
 
     return {
         dynamicData,
