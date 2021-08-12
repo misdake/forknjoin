@@ -105,10 +105,10 @@ export enum ActionType {
 }
 
 export enum LayerId {
-    bg = 1,
-    crack,
-    crate,
-    target,
-    player,
-    wall
+    bg = 1, //static
+    crack, //dynamic
+    crate, //dynamic
+    target, //static
+    player, //dynamic
+    wall //static
 }

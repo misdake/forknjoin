@@ -1,9 +1,9 @@
 import {SpriteData} from "../../renderer/sprite";
 import {LayerId} from "../enums";
 import {H, W} from "../../util";
-import {DynamicData, StaticData} from "../history";
+import {DynamicData, PlayerData, StaticData} from "../history";
 
-export function mapFromStatic(staticData: StaticData) : LogicMap {
+export function mapFromStatic(staticData: StaticData): LogicMap {
     let r = new LogicMap();
     r.load(LayerId.wall, staticData.wall);
     r.load(LayerId.target, staticData.targetWood);
@@ -11,11 +11,13 @@ export function mapFromStatic(staticData: StaticData) : LogicMap {
     r.load(LayerId.target, staticData.targetPlayer);
     return r;
 }
-export function mapFromDynamic(dynamicData: DynamicData) : LogicMap{
+
+export function mapFromDynamic(dynamicData: DynamicData, players: PlayerData[]): LogicMap {
     let r = new LogicMap();
     r.load(LayerId.crack, dynamicData.cracks);
     r.load(LayerId.crate, dynamicData.crateWood);
     r.load(LayerId.crate, dynamicData.crateMetal);
+    r.load(LayerId.player, players.map(p => p.spriteData));
     return r;
 }
 

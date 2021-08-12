@@ -122,7 +122,7 @@ export class Gamelogic {
         for (let time of this.level.startimes) {
             if (currenttime <= time) stars += "★";
         }
-        let starHtml = `<span style="color: gold; white-space: pre-wrap;">${stars}</span>`;
+        let starHtml = `<div style="color: gold; white-space: pre-wrap; height: 20px;">${stars}</div>`;
 
         if (maxtime > 0) {
             document.getElementById("maxtime").innerHTML = `Turns: <span${maxtimestyle}>${currenttime}</span> / ${maxtime}<br/>${starHtml}`;
@@ -136,6 +136,8 @@ export class Gamelogic {
         let time = this.history.time;
         let newTime = time + 1;
 
+        //TODO support special actions that change action tree
+        //TODO or let gamemode to do this?
         console.log(this.actionCurr);
         let newAction = new ActionNode(newTime, this.actionCurr.id, action, this.actionCurr);
         this.actionCurr.nextNodes = [newAction];
