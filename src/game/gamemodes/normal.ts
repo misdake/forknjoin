@@ -2,7 +2,7 @@ import {ActionNode, StateNode} from "../history";
 import {ActionType} from "../enums";
 import {GameMode} from "../gamemode";
 import {mapFromDynamic} from "./logicMap";
-import {GameModeUtil} from "./gameModeUtil";
+import {Util} from "./util";
 
 export class NormalMode extends GameMode {
     tick(actions: ActionNode[], prev: StateNode): StateNode {
@@ -19,16 +19,16 @@ export class NormalMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    GameModeUtil.tryPush(p, 0, -1, dynamicMap, r.staticData);
+                    Util.tryPush(p, 0, -1, dynamicMap, r.staticData);
                     break;
                 case ActionType.down:
-                    GameModeUtil.tryPush(p, 0, 1, dynamicMap, r.staticData);
+                    Util.tryPush(p, 0, 1, dynamicMap, r.staticData);
                     break;
                 case ActionType.left:
-                    GameModeUtil.tryPush(p, -1, 0, dynamicMap, r.staticData);
+                    Util.tryPush(p, -1, 0, dynamicMap, r.staticData);
                     break;
                 case ActionType.right:
-                    GameModeUtil.tryPush(p, 1, 0, dynamicMap, r.staticData);
+                    Util.tryPush(p, 1, 0, dynamicMap, r.staticData);
                     break;
             }
         });
@@ -36,16 +36,16 @@ export class NormalMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    GameModeUtil.tryMove(p, 0, -1, dynamicMap, r.staticData);
+                    Util.tryMove(p, 0, -1, dynamicMap, r.staticData);
                     break;
                 case ActionType.down:
-                    GameModeUtil.tryMove(p, 0, 1, dynamicMap, r.staticData);
+                    Util.tryMove(p, 0, 1, dynamicMap, r.staticData);
                     break;
                 case ActionType.left:
-                    GameModeUtil.tryMove(p, -1, 0, dynamicMap, r.staticData);
+                    Util.tryMove(p, -1, 0, dynamicMap, r.staticData);
                     break;
                 case ActionType.right:
-                    GameModeUtil.tryMove(p, 1, 0, dynamicMap, r.staticData);
+                    Util.tryMove(p, 1, 0, dynamicMap, r.staticData);
                     break;
             }
         });

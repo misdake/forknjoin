@@ -3,7 +3,7 @@ import {PlayerData, StaticData} from "../history";
 import {SpriteData} from "../../renderer/sprite";
 import {LayerId} from "../enums";
 
-export class GameModeUtil {
+export class Util {
     public static getCrate(x: number, y: number, dynamicMap: LogicMap, _staticData: StaticData): SpriteData {
         return dynamicMap.get(x, y, LayerId.crate);
     }
