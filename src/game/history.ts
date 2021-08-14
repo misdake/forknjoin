@@ -1,6 +1,6 @@
 import {ActionType} from "./enums";
 import {SpriteData} from "../renderer/sprite";
-import {LogicMap} from "./gamemodes/util";
+import {LogicMap} from "./gamemodes/logicMap";
 
 export class History {
     private onApply: (state: StateNode) => void;

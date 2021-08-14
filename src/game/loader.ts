@@ -3,7 +3,7 @@ import {DynamicData, PlayerData, StaticData} from "./history";
 import {H, W} from "../util";
 import {ImageAsset} from "./enums";
 import {SpriteData} from "../renderer/sprite";
-import {mapFromStatic} from "./gamemodes/util";
+import {mapFromStatic} from "./gamemodes/logicMap";
 
 export function loadLevelToData(level: Level): { dynamicData: DynamicData, staticData: StaticData, players: PlayerData[] } {
     let dynamicData = new DynamicData();
