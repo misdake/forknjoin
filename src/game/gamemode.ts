@@ -24,6 +24,13 @@ export abstract class GameMode {
         return r;
     }
 
+    act(inputAction: ActionType, curr: ActionNode) {
+        let newAction = new ActionNode(curr.time + 1, curr.id, inputAction, curr);
+        curr.nextNodes = [newAction];
+        curr.nextNode = newAction;
+        newAction.prevNode = curr;
+    }
+
     abstract tick(actions: ActionNode[], prev: StateNode): StateNode;
 
     check(node: StateNode): boolean {

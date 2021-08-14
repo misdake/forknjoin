@@ -38,6 +38,9 @@ export class Gamelogic {
     }
 
     load(index: number) {
+        this.done = false;
+        this.soundPlayed = false;
+
         //hide hints
         document.getElementById("alldone").style.display = "none";
         document.getElementById("timehint").style.display = "none";
@@ -136,62 +139,29 @@ export class Gamelogic {
         let time = this.history.time;
         let newTime = time + 1;
 
-        //TODO support special actions that change action tree
-        //TODO or let gamemode to do this?
-        console.log(this.actionCurr);
-        let newAction = new ActionNode(newTime, this.actionCurr.id, action, this.actionCurr);
-        this.actionCurr.nextNodes = [newAction];
-        this.actionCurr.nextNode = newAction;
-        newAction.prevNode = this.actionCurr;
+        switch (action) {
+            case ActionType.undo:
+                // this.undo(); //TODO hijack gamemode.act and tick
+                break;
+            case ActionType.redo:
+                // this.redo(); //TODO hijack gamemode.act and tick
+                break;
+        //     case ActionType.switch: //TODO let gameMode deside? or just hijack gamemode.act and tick
+        //         this.join();
+        //         break;
+        //     case ActionType.restart: //TODO load and return?
+        //         this.load(this.level.index);
+        //         break;
+        }
+
+        //let gamemode add new actionNodes
+        this.gameMode.act(action, this.actionCurr);
 
         let actions = this.getActions(newTime);
         let newState = this.gameMode.tick(actions, this.history.getState());
 
         this.history.applyNextState(newState);
-        this.actionCurr = newAction;
-
-        // switch (action) {
-        //     case ActionType.up:
-        //         this.tryMove(0, -1, this.level.player);
-        //         this.level.player.asset = ImageAsset.player_u;
-        //         this.saveMove(action);
-        //         break;
-        //     case ActionType.down:
-        //         this.tryMove(0, 1, this.level.player);
-        //         this.level.player.asset = ImageAsset.player_d;
-        //         this.saveMove(action);
-        //         break;
-        //     case ActionType.left:
-        //         this.tryMove(-1, 0, this.level.player);
-        //         this.level.player.asset = ImageAsset.player_l;
-        //         this.saveMove(action);
-        //         break;
-        //     case ActionType.right:
-        //         this.tryMove(1, 0, this.level.player);
-        //         this.level.player.asset = ImageAsset.player_r;
-        //         this.saveMove(action);
-        //         break;
-        //     case ActionType.idle:
-        //         this.saveMove(action);
-        //         break;
-        //     case ActionType.undo:
-        //         this.undo();
-        //         break;
-        //     case ActionType.redo:
-        //         this.redo();
-        //         break;
-        //     case ActionType.fork:
-        //         if (!this.level.forks.length) { //LATER allow multi-level fork
-        //             this.fork();
-        //         }
-        //         break;
-        //     case ActionType.switch:
-        //         this.join();
-        //         break;
-        //     case ActionType.restart:
-        //         this.load(this.level.index);
-        //         break;
-        // }
+        this.actionCurr = this.actionCurr.nextNode;
 
         this.updateUi();
         this.map.draw();

@@ -5,9 +5,6 @@ import {LogicMap, mapFromDynamic} from "./util";
 import {SpriteData} from "../../renderer/sprite";
 
 export class NormalMode extends GameMode {
-    private static isCrate(x: number, y: number, dynamicMap: LogicMap, _staticData: StaticData) {
-        return dynamicMap.has(x, y, LayerId.crate);
-    }
     private static getCrate(x: number, y: number, dynamicMap: LogicMap, _staticData: StaticData) : SpriteData {
         return dynamicMap.get(x, y, LayerId.crate);
     }
