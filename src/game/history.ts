@@ -16,7 +16,7 @@ export class History {
         this.time = 0;
         this.redo();
     }
-    applyNextState(node: StateNode) { //TODO 感觉最好分开传进来，actionNode的连接放进来
+    applyNextState(node: StateNode) {
         let time = node.time;
         this.states[time] = node;
         this.redo();
@@ -25,17 +25,17 @@ export class History {
         return this.states[this.time];
     }
 
-    undo() {
-        if (this.states[this.time - 1]) {
-            this.time++;
-            this.onApply(this.states[this.time]);
+    setTime(time: number) {
+        if (this.states[time]) {
+            this.time = time;
+            this.onApply(this.states[time]);
         }
     }
+    undo() {
+        this.setTime(this.time - 1);
+    }
     redo() {
-        if (this.states[this.time + 1]) {
-            this.time++;
-            this.onApply(this.states[this.time]);
-        }
+        this.setTime(this.time + 1);
     }
 }
 

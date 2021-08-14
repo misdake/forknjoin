@@ -137,31 +137,46 @@ export class Gamelogic {
     update(action: ActionType) {
         if (this.done) return;
         let time = this.history.time;
-        let newTime = time + 1;
+        let nextTime = time + 1;
+
+        let act = true;
 
         switch (action) {
             case ActionType.undo:
-                // this.undo(); //TODO hijack gamemode.act and tick
+                if (this.actionCurr.prevNode) {
+                    let prev = this.actionCurr.prevNode;
+                    prev.nextNode = this.actionCurr;
+                    this.actionCurr = prev;
+                    this.history.setTime(this.actionCurr.time);
+                }
+                act = false;
                 break;
             case ActionType.redo:
-                // this.redo(); //TODO hijack gamemode.act and tick
+                if (this.actionCurr.nextNode) {
+                    let next = this.actionCurr.nextNode;
+                    next.prevNode = this.actionCurr;
+                    this.actionCurr = next;
+                    this.history.setTime(this.actionCurr.time);
+                }
+                act = false;
                 break;
-        //     case ActionType.switch: //TODO let gameMode deside? or just hijack gamemode.act and tick
-        //         this.join();
-        //         break;
-        //     case ActionType.restart: //TODO load and return?
-        //         this.load(this.level.index);
-        //         break;
+            //     case ActionType.switch: //TODO let gameMode deside? or just hijack gamemode.act and tick
+            //         this.join();
+            //         break;
+            //     case ActionType.restart: //TODO load and return?
+            //         this.load(this.level.index);
+            //         break;
         }
 
-        //let gamemode add new actionNodes
-        this.gameMode.act(action, this.actionCurr);
+        if (act) {
+            //let gamemode add new actionNodes
+            this.gameMode.act(action, this.actionCurr);
 
-        let actions = this.getActions(newTime);
-        let newState = this.gameMode.tick(actions, this.history.getState());
-
-        this.history.applyNextState(newState);
-        this.actionCurr = this.actionCurr.nextNode;
+            let actions = this.getActions(nextTime);
+            let newState = this.gameMode.tick(actions, this.history.getState());
+            this.history.applyNextState(newState);
+            this.actionCurr = this.actionCurr.nextNode;
+        }
 
         this.updateUi();
         this.map.draw();
