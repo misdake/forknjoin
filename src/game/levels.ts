@@ -43,6 +43,7 @@ export interface Level {
     besttime?: number;
     showkey: boolean;
     map: number[];
+    startindex?: number;
 }
 
 export const levels: Level[] = [{

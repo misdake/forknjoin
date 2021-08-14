@@ -44,7 +44,6 @@ export class Gamelogic {
         //hide hints
         document.getElementById("alldone").style.display = "none";
         document.getElementById("timehint").style.display = "none";
-        document.getElementById("joinhint").style.display = "none";
 
         this.levelIndex = index;
         this.level = levels[index];
@@ -72,14 +71,13 @@ export class Gamelogic {
         this.history = new History(state => this.applyDynamic(state));
 
         this.actions = this.gameMode.initActions(this.level, state);
-        this.actionCurr = this.actions[0]; //TODO 是否会需要指定？比如放到level里
+        this.actionCurr = this.actions[this.level.startindex ?? 0]; //TODO test startIndex
         this.history.initState(state);
 
         this.check();
 
-        this.map.draw();
-
         this.updateUi();
+        this.map.draw();
     }
 
     private addAllSprites(layerId: LayerId, sprites: SpriteData[]) {
@@ -160,12 +158,14 @@ export class Gamelogic {
                 }
                 act = false;
                 break;
+
             //     case ActionType.switch: //TODO let gameMode deside? or just hijack gamemode.act and tick
             //         this.join();
             //         break;
-            //     case ActionType.restart: //TODO load and return?
-            //         this.load(this.level.index);
-            //         break;
+
+            case ActionType.restart:
+                this.load(this.levelIndex);
+                return;
         }
 
         if (act) {
@@ -174,6 +174,7 @@ export class Gamelogic {
 
             let actions = this.getActions(nextTime);
             let newState = this.gameMode.tick(actions, this.history.getState());
+
             this.history.applyNextState(newState);
             this.actionCurr = this.actionCurr.nextNode;
         }
@@ -185,17 +186,12 @@ export class Gamelogic {
 
     check(): boolean {
         document.getElementById("timehint").style.display = "none";
-        document.getElementById("joinhint").style.display = "none";
 
         let state = this.history.getState();
         let levelDone = this.gameMode.check(state);
 
         let maxtime = this.level.maxtime;
         let currenttime = this.history.time;
-        // if (levelDone && this.level.forks.length) {
-        //     document.getElementById("joinhint").style.display = "block";
-        //     levelDone = false;
-        // }
         if (levelDone && currenttime > maxtime && maxtime > 0) {
             document.getElementById("timehint").style.display = "block";
             levelDone = false;
