@@ -5,6 +5,8 @@ import {mapFromDynamic} from "./logicMap";
 import {Util} from "./util";
 
 export class NormalMode extends GameMode {
+    static readonly instance = new NormalMode();
+
     tick(actions: ActionNode[], prev: StateNode): StateNode {
         let actionMap = new Map<number, ActionType>(actions.map((v, i) => [v.id, v.action]));
 
