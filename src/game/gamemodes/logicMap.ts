@@ -17,7 +17,7 @@ export function mapFromDynamic(dynamicData: DynamicData, players: PlayerData[]):
     r.load(LayerId.crack, dynamicData.cracks);
     r.load(LayerId.crate, dynamicData.crateWood);
     r.load(LayerId.crate, dynamicData.crateMetal);
-    r.load(LayerId.player, players.map(p => p.spriteData));
+    players.forEach((p, i) => r.load(p.layer, [p.spriteData]));
     return r;
 }
 

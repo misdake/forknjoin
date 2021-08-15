@@ -1,7 +1,7 @@
 import {LogicMap} from "./logicMap";
 import {PlayerData, StaticData} from "../history";
 import {SpriteData} from "../../renderer/sprite";
-import {LayerId} from "../enums";
+import {LayerId, PLAYER_LAYERS} from "../enums";
 
 export class Util {
     public static getCrate(x: number, y: number, dynamicMap: LogicMap, _staticData: StaticData): SpriteData {
@@ -9,13 +9,16 @@ export class Util {
     }
     public static isPlayerOk(x: number, y: number, dynamicMap: LogicMap, staticData: StaticData) {
         return !dynamicMap.has(x, y, LayerId.crate)
-            && !dynamicMap.has(x, y, LayerId.player)
+            && !this.isPlayer(dynamicMap, x, y)
             && !staticData.map.has(x, y, LayerId.wall);
+    }
+    private static isPlayer(dynamicMap: LogicMap, x: number, y: number) {
+        return dynamicMap.has(x, y, ...PLAYER_LAYERS);
     }
     public static isCrateOk(x: number, y: number, dynamicMap: LogicMap, staticData: StaticData) {
         return !dynamicMap.has(x, y, LayerId.crate)
             && !dynamicMap.has(x, y, LayerId.crack)
-            && !dynamicMap.has(x, y, LayerId.player)
+            && !this.isPlayer(dynamicMap, x, y)
             && !staticData.map.has(x, y, LayerId.wall);
     }
 
@@ -23,7 +26,7 @@ export class Util {
         let newX = player.spriteData.x + dx;
         let newY = player.spriteData.y + dy;
         if (this.isPlayerOk(newX, newY, dynamicMap, staticData)) {
-            dynamicMap.move(LayerId.player, player.spriteData, newX, newY);
+            dynamicMap.move(player.layer, player.spriteData, newX, newY);
             return true;
         } else {
             return false;

@@ -1,4 +1,4 @@
-import {ActionType} from "./enums";
+import {ActionType, LayerId} from "./enums";
 import {SpriteData} from "../renderer/sprite";
 import {LogicMap} from "./gamemodes/logicMap";
 
@@ -73,11 +73,13 @@ export class ActionNode {
 
 export class PlayerData {
     id: number;
+    layer: LayerId;
     spriteData: SpriteData;
 
     clone() {
         let r = new PlayerData();
         r.id = this.id;
+        r.layer = this.layer;
         r.spriteData = this.spriteData.clone();
         return r
     }

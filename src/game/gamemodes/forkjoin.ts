@@ -1,20 +1,19 @@
 import {ActionNode, PlayerData, StateNode} from "../history";
 import {GameMode} from "../gamemode";
-import {NormalMode} from "./normal";
-import {ActionType} from "../enums";
+import {ActionType, LayerId} from "../enums";
 import {mapFromDynamic} from "./logicMap";
 import {Util} from "./util";
 
 export class ForkJoinMode extends GameMode {
     static readonly instance = new ForkJoinMode();
 
-    private static next_id = 0;
+    private static next_id = 100;
 
     act(inputAction: ActionType, curr: ActionNode) {
         switch (inputAction) {
             case ActionType.fork:
-                let child1 = new ActionNode(curr.time + 1, ForkJoinMode.next_id++, inputAction, curr);
-                let child2 = new ActionNode(curr.time + 1, ForkJoinMode.next_id++, inputAction, curr);
+                let child1 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
+                let child2 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
                 curr.nextNodes = [child1, child2];
                 curr.nextNode = child1;
                 child1.prevNode = curr;
@@ -41,9 +40,10 @@ export class ForkJoinMode extends GameMode {
             let parent = prevPlayers.get(action.prevNode.id);
             let child = parent.clone();
             child.id = action.id;
-            r.players.push(child); //TODO two players will be at same spot in LogicMap.
+            r.players.push(child);
         });
         r.players.sort((a, b) => a.id - b.id);
+        r.players.forEach((p, i) => p.layer = LayerId.player1 + i); //this is the only real layer assignment
 
         let dynamicMap = mapFromDynamic(r.dynamicData, r.players);
 

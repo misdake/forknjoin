@@ -87,10 +87,10 @@ export enum SoundAsset {
 }
 
 export enum ActionType {
-    none = 0,
+    none = 1,
 
     //these are recorded
-    up = 1,
+    up = 2,
     down,
     left,
     right,
@@ -109,6 +109,11 @@ export enum LayerId {
     crack, //dynamic
     crate, //dynamic
     target, //static
-    player, //dynamic
-    wall //static
+    player1, //dynamic
+    player2, //dynamic
+    player3, //dynamic
+    player4, //dynamic
+    wall, //static
 }
+
+export const PLAYER_LAYERS = [LayerId.player1, LayerId.player2, LayerId.player3, LayerId.player4];

@@ -88,7 +88,7 @@ export class Gamelogic {
     }
     private applyDynamic(state: StateNode) {
         this.map.clearDynamic();
-        this.addAllSprites(LayerId.player, state.players.map(p => p.spriteData));
+        state.players.forEach(p => this.addAllSprites(p.layer, [p.spriteData]));
         this.addAllSprites(LayerId.crate, state.dynamicData.crateMetal);
         this.addAllSprites(LayerId.crate, state.dynamicData.crateWood);
         this.addAllSprites(LayerId.crack, state.dynamicData.cracks);
@@ -105,7 +105,7 @@ export class Gamelogic {
             if (node.time === time) {
                 r.push(node);
             }
-            if(node.time < time && !node.nextNode) {
+            if (node.time < time && !node.nextNode) {
                 r.push(new ActionNode(time, node.id, ActionType.none, node));
             }
 

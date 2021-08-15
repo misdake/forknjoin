@@ -1,5 +1,5 @@
 import {Layer} from "./layer";
-import {ImageAsset, LayerId} from "../game/enums";
+import {ImageAsset, LayerId, PLAYER_LAYERS} from "../game/enums";
 import {H, W} from "../util";
 
 export class GameMap {
@@ -26,7 +26,7 @@ export class GameMap {
         this.clearDynamic();
     }
     clearDynamic() {
-        this.getLayer(LayerId.player).clear();
+        PLAYER_LAYERS.forEach(layer => this.getLayer(layer).clear());
         this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.crack).clear();
     }
@@ -58,7 +58,7 @@ export class GameMap {
     }
     isSprite(asset: ImageAsset, x: number, y: number, ...layerIds: LayerId[]) {
         let r = this.getSprite(x, y, ...layerIds);
-        if(r) {
+        if (r) {
             return r.asset === asset;
         } else {
             return false;
