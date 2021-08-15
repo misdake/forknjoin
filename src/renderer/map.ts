@@ -21,11 +21,9 @@ export class GameMap {
     }
 
     clearLayers() {
-        this.getLayer(LayerId.player).clear();
-        this.getLayer(LayerId.crate).clear();
         this.getLayer(LayerId.target).clear();
         this.getLayer(LayerId.wall).clear();
-        this.getLayer(LayerId.crack).clear();
+        this.clearDynamic();
     }
     clearDynamic() {
         this.getLayer(LayerId.player).clear();

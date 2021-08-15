@@ -6,7 +6,7 @@ import {SoundAssets} from "../renderer/sound";
 import {ActionNode, History, StateNode} from "./history";
 import {GameMode} from "./gamemode";
 import {SpriteData} from "../renderer/sprite";
-import {NormalMode} from "./gamemodes/normal";
+import {ForkJoinMode} from "./gamemodes/forkjoin";
 
 let opacityTimeout: number = null;
 
@@ -62,8 +62,8 @@ export class Gamelogic {
 
         this.map.clearLayers();
 
-        // this.gameMode = new ForkJoinMode();
-        this.gameMode = new NormalMode();
+        this.gameMode = ForkJoinMode.instance;
+        // this.gameMode = NormalMode.instance; //TODO select mode by level
         let state = this.gameMode.initState(this.level);
 
         this.applyStatic(state);
@@ -105,6 +105,10 @@ export class Gamelogic {
             if (node.time === time) {
                 r.push(node);
             }
+            if(node.time < time && !node.nextNode) {
+                r.push(new ActionNode(time, node.id, ActionType.none, node));
+            }
+
             return node.time < time;
         }));
         return r;

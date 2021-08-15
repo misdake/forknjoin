@@ -69,15 +69,6 @@ export class ActionNode {
             }
         }
     }
-
-    goPrev(log: boolean = true): ActionNode {
-        if (log && this.prevNode) this.prevNode.nextNode = this;
-        return this.prevNode;
-    }
-    goNext(log: boolean = true): ActionNode {
-        if (log && this.nextNode) this.nextNode.prevNode = this;
-        return this.prevNode;
-    }
 }
 
 export class PlayerData {
