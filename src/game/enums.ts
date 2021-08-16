@@ -104,6 +104,19 @@ export enum ActionType {
     restart,
 }
 
+export const DIRECTION_DX_DY = new Map<ActionType, number[]>([
+    [ActionType.up, [0, -1]],
+    [ActionType.down, [0, 1]],
+    [ActionType.left, [-1, 0]],
+    [ActionType.right, [1, 0]],
+]);
+export const DIRECTION_ASSET = new Map<ActionType, string>([
+    [ActionType.up, "u"],
+    [ActionType.down, "d"],
+    [ActionType.left, "l"],
+    [ActionType.right, "r"],
+]);
+
 export enum LayerId {
     bg = 1, //static
     crack, //dynamic

@@ -1,6 +1,6 @@
 import {ActionNode, PlayerData, StateNode} from "../history";
 import {GameMode} from "../gamemode";
-import {ActionType, LayerId} from "../enums";
+import {ActionType, DIRECTION_ASSET, DIRECTION_DX_DY, ImageAsset, LayerId, PLAYER_LAYERS} from "../enums";
 import {mapFromDynamic} from "./logicMap";
 import {Util} from "./util";
 
@@ -44,6 +44,7 @@ export class ForkJoinMode extends GameMode {
         });
         r.players.sort((a, b) => a.id - b.id);
         r.players.forEach((p, i) => p.layer = LayerId.player1 + i); //this is the only real layer assignment
+        if (r.players.length > PLAYER_LAYERS.length) debugger;
 
         let dynamicMap = mapFromDynamic(r.dynamicData, r.players);
 
@@ -51,16 +52,11 @@ export class ForkJoinMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    Util.tryPush(p, 0, -1, dynamicMap, r.staticData);
-                    break;
                 case ActionType.down:
-                    Util.tryPush(p, 0, 1, dynamicMap, r.staticData);
-                    break;
                 case ActionType.left:
-                    Util.tryPush(p, -1, 0, dynamicMap, r.staticData);
-                    break;
                 case ActionType.right:
-                    Util.tryPush(p, 1, 0, dynamicMap, r.staticData);
+                    let [dx, dy] = DIRECTION_DX_DY.get(action);
+                    Util.tryPush(p, dx, dy, dynamicMap, r.staticData);
                     break;
             }
         });
@@ -68,16 +64,14 @@ export class ForkJoinMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    Util.tryMove(p, 0, -1, dynamicMap, r.staticData);
-                    break;
                 case ActionType.down:
-                    Util.tryMove(p, 0, 1, dynamicMap, r.staticData);
-                    break;
                 case ActionType.left:
-                    Util.tryMove(p, -1, 0, dynamicMap, r.staticData);
-                    break;
                 case ActionType.right:
-                    Util.tryMove(p, 1, 0, dynamicMap, r.staticData);
+                    let [dx, dy] = DIRECTION_DX_DY.get(action);
+                    let d = DIRECTION_ASSET.get(action);
+                    let asset = `player_${d}.png` as ImageAsset;
+                    p.spriteData.asset = asset;
+                    Util.tryMove(p, dx, dy, dynamicMap, r.staticData);
                     break;
             }
         });
