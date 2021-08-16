@@ -71,17 +71,28 @@ export class ActionNode {
     }
 }
 
+export enum PlayerState {
+    NORMAL = 1,
+    LAST,
+    FINISHED,
+}
+
 export class PlayerData {
     id: number;
     layer: LayerId;
+    state: PlayerState;
     spriteData: SpriteData;
+
+    constructor() {
+    }
 
     clone() {
         let r = new PlayerData();
         r.id = this.id;
         r.layer = this.layer;
+        r.state = this.state;
         r.spriteData = this.spriteData.clone();
-        return r
+        return r;
     }
 }
 

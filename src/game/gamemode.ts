@@ -31,7 +31,7 @@ export abstract class GameMode {
         newAction.prevNode = curr;
     }
 
-    abstract tick(actions: ActionNode[], prev: StateNode): StateNode;
+    abstract tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode;
 
     check(node: StateNode): boolean {
         let player1 = this.check1(node.staticData.targetPlayer, node.players.map(p => p.spriteData));

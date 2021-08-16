@@ -177,7 +177,7 @@ export class Gamelogic {
             this.gameMode.act(action, this.actionCurr);
 
             let actions = this.getActions(nextTime);
-            let newState = this.gameMode.tick(actions, this.history.getState());
+            let newState = this.gameMode.tick(actions, this.history.getState(), this.actionCurr);
 
             this.history.applyNextState(newState);
             this.actionCurr = this.actionCurr.nextNode;

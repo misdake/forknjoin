@@ -122,11 +122,11 @@ export enum LayerId {
     crack, //dynamic
     crate, //dynamic
     target, //static
-    player1, //dynamic
+    player1 = 10, //dynamic
     player2, //dynamic
     player3, //dynamic
     player4, //dynamic
-    wall, //static
+    wall = 100, //static
 }
 
 export const PLAYER_LAYERS = [LayerId.player1, LayerId.player2, LayerId.player3, LayerId.player4];

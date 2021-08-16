@@ -1,4 +1,4 @@
-import {ActionNode, PlayerData, StateNode} from "../history";
+import {ActionNode, PlayerData, PlayerState, StateNode} from "../history";
 import {GameMode} from "../gamemode";
 import {ActionType, DIRECTION_ASSET, DIRECTION_DX_DY, ImageAsset, LayerId, PLAYER_LAYERS} from "../enums";
 import {mapFromDynamic} from "./logicMap";
@@ -24,8 +24,9 @@ export class ForkJoinMode extends GameMode {
         }
     }
 
-    tick(actions: ActionNode[], prev: StateNode): StateNode {
+    tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode {
         let actionMap = new Map<number, ActionType>(actions.map((v, i) => [v.id, v.action]));
+        let actionIsLast = new Map<number, boolean>(actions.map((v, i) => [v.id, !v.nextNode]));
 
         let prevPlayers = new Map<number, PlayerData>(prev.players.map(p => [p.id, p]));
         let forkActions = actions.filter(v => v.action === ActionType.fork && prevPlayers.has(v.prevNode.id));
@@ -43,7 +44,12 @@ export class ForkJoinMode extends GameMode {
             r.players.push(child);
         });
         r.players.sort((a, b) => a.id - b.id);
-        r.players.forEach((p, i) => p.layer = LayerId.player1 + i); //this is the only real layer assignment
+        r.players.forEach((p, i) => {
+            p.layer = LayerId.player1 + i
+            p.state = PlayerState.NORMAL;
+            if (actionIsLast.get(p.id)) p.state = PlayerState.LAST;
+            if (actionMap.get(p.id) === ActionType.none) p.state = PlayerState.FINISHED;
+        });
         if (r.players.length > PLAYER_LAYERS.length) debugger;
 
         let dynamicMap = mapFromDynamic(r.dynamicData, r.players);

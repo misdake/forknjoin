@@ -1,5 +1,5 @@
 import {CELL_IMAGE_MAPPING, Level} from "./levels";
-import {DynamicData, PlayerData, StaticData} from "./history";
+import {DynamicData, PlayerData, PlayerState, StaticData} from "./history";
 import {H, W} from "../util";
 import {ImageAsset, LayerId} from "./enums";
 import {SpriteData} from "../renderer/sprite";
@@ -21,7 +21,8 @@ export function loadLevelToData(level: Level): { dynamicData: DynamicData, stati
                     case ImageAsset.player_d: {
                         let p = new PlayerData();
                         p.id = players.length + 1;
-                        p.layer = LayerId.player1;
+                        p.layer = LayerId.player1 + players.length;
+                        p.state = PlayerState.LAST;
                         p.spriteData = sprite;
                         players.push(p);
                         break;
