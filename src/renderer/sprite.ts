@@ -5,6 +5,7 @@ export class SpriteData {
     x: number;
     y: number;
     asset: ImageAsset;
+    alpha: number = 1;
 
     static create(x: number, y: number, asset: ImageAsset) {
         let r = new SpriteData;
@@ -19,16 +20,12 @@ export class SpriteData {
         d.x = this.x;
         d.y = this.y;
         d.asset = this.asset;
+        d.alpha = this.alpha;
         return d;
     }
 }
 
 export class Sprite extends SpriteData {
-
-    x: number;
-    y: number;
-    asset: ImageAsset;
-    alpha: number = 1;
     readonly layer: Layer;
 
     constructor(asset: ImageAsset, layer: Layer) {

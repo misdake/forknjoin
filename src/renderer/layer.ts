@@ -29,9 +29,9 @@ export class Layer {
     }
 
     createSpriteWithData(data: SpriteData) {
-        return this.createSprite(data.x, data.y, data.asset);
+        return this.createSprite(data.x, data.y, data.asset, data.alpha);
     }
-    createSprite(x: number, y: number, asset: ImageAsset) {
+    createSprite(x: number, y: number, asset: ImageAsset, alpha: number = 1) {
         if (this.get(x, y)) {
             console.log("new sprite target is not empty!");
             debugger;
@@ -39,6 +39,7 @@ export class Layer {
         let sprite = new Sprite(asset, this);
         sprite.x = x;
         sprite.y = y;
+        sprite.alpha = alpha;
         this.set.add(sprite);
         this.cells[x][y] = sprite;
         return sprite;
