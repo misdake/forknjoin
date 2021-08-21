@@ -101,16 +101,15 @@ export class Gamelogic {
     }
     private getActions(time: number): ActionNode[] {
         let r: ActionNode[] = [];
-        this.actions.forEach(root => root.visitChildren(node => {
+        ActionNode.visitAllChildren(this.actions, node => {
             if (node.time === time) {
                 r.push(node);
             }
             if (node.time < time && !node.nextNode) {
                 r.push(new ActionNode(time, node.id, ActionType.none, node));
             }
-
             return node.time < time;
-        }));
+        });
         return r;
     }
 
@@ -138,8 +137,6 @@ export class Gamelogic {
 
     update(action: ActionType) {
         if (this.done) return;
-        let time = this.history.time;
-        let nextTime = time + 1;
 
         let act = true;
 
@@ -153,6 +150,7 @@ export class Gamelogic {
                 }
                 act = false;
                 break;
+
             case ActionType.redo:
                 if (this.actionCurr.nextNode) {
                     let next = this.actionCurr.nextNode;
@@ -163,24 +161,23 @@ export class Gamelogic {
                 act = false;
                 break;
 
-            //     case ActionType.switch: //TODO let gameMode deside? or just hijack gamemode.act and tick
-            //         this.join();
-            //         break;
-
             case ActionType.restart:
                 this.load(this.levelIndex);
                 return;
         }
 
         if (act) {
-            //let gamemode add new actionNodes
-            this.gameMode.act(action, this.actionCurr);
+            let {nextNode, runTick} = this.gameMode.act(action, this.actionCurr, this.actions);
 
-            let actions = this.getActions(nextTime);
-            let newState = this.gameMode.tick(actions, this.history.getState(), this.actionCurr);
+            if (runTick) {
+                let actions = this.getActions(nextNode.time);
+                let newState = this.gameMode.tick(actions, this.history.getState(), this.actionCurr);
+                this.history.applyNextState(newState);
+            } else {
+                this.history.setTime(nextNode.time);
+            }
 
-            this.history.applyNextState(newState);
-            this.actionCurr = this.actionCurr.nextNode;
+            this.actionCurr = nextNode;
         }
 
         this.updateUi();

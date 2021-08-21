@@ -61,7 +61,18 @@ export class ActionNode {
         this.nextNode = null;
     }
 
-    visitChildren(callback: (node: ActionNode) => boolean): void {
+    static visitAllChildren(roots: ActionNode[], callback: (node: ActionNode) => boolean) {
+        let visited = new Set<ActionNode>();
+        for (let root of roots) {
+            root.visitChildren(node => {
+                if (visited.has(node)) return false;
+                visited.add(node);
+                return callback(node);
+            });
+        }
+    }
+
+    private visitChildren(callback: (node: ActionNode) => boolean): void {
         let callChildren = callback(this);
         if (callChildren) {
             if (this.nextNodes) for (let node of this.nextNodes) {

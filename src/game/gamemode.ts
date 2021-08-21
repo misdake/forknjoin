@@ -4,6 +4,11 @@ import {Level} from "./levels";
 import {SpriteData} from "../renderer/sprite";
 import {loadLevelToData} from "./loader";
 
+export class ActResult {
+    nextNode: ActionNode;
+    runTick: boolean;
+}
+
 export abstract class GameMode {
     /**
      * 根据关卡进行初始化，得到一个关卡节点
@@ -24,11 +29,12 @@ export abstract class GameMode {
         return r;
     }
 
-    act(inputAction: ActionType, curr: ActionNode) {
+    act(inputAction: ActionType, curr: ActionNode, roots: ActionNode[]) : ActResult {
         let newAction = new ActionNode(curr.time + 1, curr.id, inputAction, curr);
         curr.nextNodes = [newAction];
         curr.nextNode = newAction;
         newAction.prevNode = curr;
+        return {nextNode: newAction, runTick: true};
     }
 
     abstract tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode;

@@ -1,5 +1,5 @@
 import {ActionNode, PlayerData, PlayerState, StateNode} from "../history";
-import {GameMode} from "../gamemode";
+import {ActResult, GameMode} from "../gamemode";
 import {ActionType, DIRECTION_ASSET, DIRECTION_DX_DY, ImageAsset, LayerId, PLAYER_LAYERS} from "../enums";
 import {mapFromDynamic} from "./logicMap";
 import {Util} from "./util";
@@ -9,7 +9,7 @@ export class ForkJoinMode extends GameMode {
 
     private static next_id = 100;
 
-    act(inputAction: ActionType, curr: ActionNode) {
+    act(inputAction: ActionType, curr: ActionNode, roots: ActionNode[]): ActResult {
         switch (inputAction) {
             case ActionType.fork:
                 let child1 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
@@ -18,10 +18,36 @@ export class ForkJoinMode extends GameMode {
                 curr.nextNode = child1;
                 child1.prevNode = curr;
                 child2.prevNode = curr;
-                break;
+                return {nextNode: curr.nextNode, runTick: true};
+
+            case ActionType.switch:
+                //find next player
+                let actions = ForkJoinMode.findActions(curr.time, roots);
+                let next = ForkJoinMode.findNextPlayer(curr, actions);
+                return {nextNode: next, runTick: false};
+
             default:
-                super.act(inputAction, curr);
+                return super.act(inputAction, curr, roots);
         }
+    }
+
+    private static findActions(time: number, roots: ActionNode[]): ActionNode[] {
+        let r: ActionNode[] = [];
+        ActionNode.visitAllChildren(roots, node => {
+            if (node.time === time) {
+                r.push(node);
+            } else if (node.time < time && !node.nextNode) {
+                r.push(node);
+            }
+            return node.time <= time;
+        });
+        return r;
+    }
+    private static findNextPlayer(curr: ActionNode, actions: ActionNode[]): ActionNode {
+        let index = actions.indexOf(curr);
+        if (index < 0) debugger;
+        let nextIndex = (index + 1) % actions.length;
+        return actions[nextIndex];
     }
 
     tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode {
@@ -45,7 +71,7 @@ export class ForkJoinMode extends GameMode {
         });
         r.players.sort((a, b) => a.id - b.id);
         r.players.forEach((p, i) => {
-            p.layer = LayerId.player1 + i
+            p.layer = LayerId.player1 + i;
             p.state = PlayerState.NORMAL;
             if (actionIsLast.get(p.id)) p.state = PlayerState.LAST;
             if (actionMap.get(p.id) === ActionType.none) p.state = PlayerState.FINISHED;
