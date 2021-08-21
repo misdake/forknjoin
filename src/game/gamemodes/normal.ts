@@ -21,16 +21,16 @@ export class NormalMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    Util.tryPush(p, 0, -1, dynamicMap, r.staticData);
+                    Util.tryPush(p, 0, -1, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.down:
-                    Util.tryPush(p, 0, 1, dynamicMap, r.staticData);
+                    Util.tryPush(p, 0, 1, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.left:
-                    Util.tryPush(p, -1, 0, dynamicMap, r.staticData);
+                    Util.tryPush(p, -1, 0, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.right:
-                    Util.tryPush(p, 1, 0, dynamicMap, r.staticData);
+                    Util.tryPush(p, 1, 0, r.players, dynamicMap, r.staticData);
                     break;
             }
         });
@@ -38,16 +38,16 @@ export class NormalMode extends GameMode {
             let action = actionMap.get(p.id);
             switch (action) {
                 case ActionType.up:
-                    Util.tryMove(p, 0, -1, dynamicMap, r.staticData);
+                    Util.tryMove(p, 0, -1, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.down:
-                    Util.tryMove(p, 0, 1, dynamicMap, r.staticData);
+                    Util.tryMove(p, 0, 1, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.left:
-                    Util.tryMove(p, -1, 0, dynamicMap, r.staticData);
+                    Util.tryMove(p, -1, 0, r.players, dynamicMap, r.staticData);
                     break;
                 case ActionType.right:
-                    Util.tryMove(p, 1, 0, dynamicMap, r.staticData);
+                    Util.tryMove(p, 1, 0, r.players, dynamicMap, r.staticData);
                     break;
             }
         });

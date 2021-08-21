@@ -51,8 +51,8 @@ export class ForkJoinMode extends GameMode {
     }
 
     tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode {
-        let actionMap = new Map<number, ActionType>(actions.map((v, i) => [v.id, v.action]));
-        let actionIsLast = new Map<number, boolean>(actions.map((v, i) => [v.id, !v.nextNode]));
+        let actionMap = new Map<number, ActionType>(actions.map(v => [v.id, v.action]));
+        let actionIsLast = new Map<number, boolean>(actions.map(v => [v.id, !v.nextNode]));
 
         let prevPlayers = new Map<number, PlayerData>(prev.players.map(p => [p.id, p]));
         let forkActions = actions.filter(v => v.action === ActionType.fork && prevPlayers.has(v.prevNode.id));
@@ -88,7 +88,7 @@ export class ForkJoinMode extends GameMode {
                 case ActionType.left:
                 case ActionType.right:
                     let [dx, dy] = DIRECTION_DX_DY.get(action);
-                    Util.tryPush(p, dx, dy, dynamicMap, r.staticData);
+                    Util.tryPush(p, dx, dy, r.players, dynamicMap, r.staticData);
                     break;
             }
         });
@@ -103,7 +103,7 @@ export class ForkJoinMode extends GameMode {
                     let d = DIRECTION_ASSET.get(action);
                     let asset = `player_${d}.png` as ImageAsset;
                     p.spriteData.asset = asset;
-                    Util.tryMove(p, dx, dy, dynamicMap, r.staticData);
+                    Util.tryMove(p, dx, dy, r.players, dynamicMap, r.staticData);
                     break;
             }
         });
