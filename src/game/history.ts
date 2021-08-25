@@ -90,8 +90,11 @@ export enum PlayerState {
 
 export class PlayerData {
     id: number;
+
     layer: LayerId;
     state: PlayerState;
+    action: ActionNode;
+
     spriteData: SpriteData;
 
     constructor() {
@@ -102,6 +105,7 @@ export class PlayerData {
         r.id = this.id;
         r.layer = this.layer;
         r.state = this.state;
+        r.action = this.action;
         r.spriteData = this.spriteData.clone();
         return r;
     }

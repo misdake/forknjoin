@@ -51,7 +51,7 @@ export class ForkJoinMode extends GameMode {
     }
 
     tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode {
-        let actionMap = new Map<number, ActionType>(actions.map(v => [v.id, v.action]));
+        let actionMap = new Map<number, ActionNode>(actions.map(v => [v.id, v]));
         let actionIsLast = new Map<number, boolean>(actions.map(v => [v.id, !v.nextNode]));
 
         let prevPlayers = new Map<number, PlayerData>(prev.players.map(p => [p.id, p]));
@@ -62,7 +62,12 @@ export class ForkJoinMode extends GameMode {
         r.dynamicData = prev.dynamicData.clone();
         r.players = prev.players.map(p => p.clone());
 
-        r.players = r.players.filter(p => actionMap.get(p.id));
+        //fork
+        r.players = r.players.filter(p => {
+            let action = actionMap.get(p.id);
+            if (action) p.action = action;
+            return action;
+        });
         forkActions.forEach(action => {
             let parent = prevPlayers.get(action.prevNode.id);
             let child = parent.clone();
@@ -74,39 +79,45 @@ export class ForkJoinMode extends GameMode {
             p.layer = LayerId.player1 + i;
             p.state = PlayerState.NORMAL;
             if (actionIsLast.get(p.id)) p.state = PlayerState.LAST;
-            if (actionMap.get(p.id) === ActionType.none) p.state = PlayerState.FINISHED;
+            if (actionMap.get(p.id).action === ActionType.none) p.state = PlayerState.FINISHED;
         });
         if (r.players.length > PLAYER_LAYERS.length) debugger;
 
+        //move and push
         let dynamicMap = mapFromDynamic(r.dynamicData, r.players);
-
         r.players.forEach(p => {
             let action = actionMap.get(p.id);
-            switch (action) {
+            switch (action.action) {
                 case ActionType.up:
                 case ActionType.down:
                 case ActionType.left:
                 case ActionType.right:
-                    let [dx, dy] = DIRECTION_DX_DY.get(action);
+                    let [dx, dy] = DIRECTION_DX_DY.get(action.action);
                     Util.tryPush(p, dx, dy, r.players, dynamicMap, r.staticData);
                     break;
             }
         });
         r.players.forEach(p => {
             let action = actionMap.get(p.id);
-            switch (action) {
+            switch (action.action) {
                 case ActionType.up:
                 case ActionType.down:
                 case ActionType.left:
                 case ActionType.right:
-                    let [dx, dy] = DIRECTION_DX_DY.get(action);
-                    let d = DIRECTION_ASSET.get(action);
+                    let [dx, dy] = DIRECTION_DX_DY.get(action.action);
+                    let d = DIRECTION_ASSET.get(action.action);
                     let asset = `player_${d}.png` as ImageAsset;
                     p.spriteData.asset = asset;
                     Util.tryMove(p, dx, dy, r.players, dynamicMap, r.staticData);
                     break;
             }
         });
+
+        //join
+        // r.players
+        //TODO check last/none state, 0~n-1 x i+1~n-1,
+        let finished = r.players.filter(p => p.state === PlayerState.FINISHED || (p.action !== curr && p.state === PlayerState.LAST));
+        // let finished = r.players.filter(p => p.state === PlayerState.NORMAL);
 
         console.log("tick", actions, prev, r);
         return r;
