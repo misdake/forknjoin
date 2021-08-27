@@ -1,18 +1,22 @@
 export enum ImageAsset {
     placeholder = "placeholder.png",
 
-    player_u = "player_u.png",
-    player_d = "player_d.png",
-    player_l = "player_l.png",
-    player_r = "player_r.png",
-    fork_u = "fork_u.png",
-    fork_d = "fork_d.png",
-    fork_l = "fork_l.png",
-    fork_r = "fork_r.png",
-    join_u = "join_u.png",
-    join_d = "join_d.png",
-    join_l = "join_l.png",
-    join_r = "join_r.png",
+    player0_u = "player0_u.png",
+    player0_d = "player0_d.png",
+    player0_l = "player0_l.png",
+    player0_r = "player0_r.png",
+    player1_u = "player1_u.png",
+    player1_d = "player1_d.png",
+    player1_l = "player1_l.png",
+    player1_r = "player1_r.png",
+    player2_u = "player2_u.png",
+    player2_d = "player2_d.png",
+    player2_l = "player2_l.png",
+    player2_r = "player2_r.png",
+    player3_u = "player3_u.png",
+    player3_d = "player3_d.png",
+    player3_l = "player3_l.png",
+    player3_r = "player3_r.png",
 
     crack_1 = "crack_1.png",
     crack_2 = "crack_2.png",
@@ -36,48 +40,9 @@ export enum ImageAsset {
     bg4 = "bg4.png",
 }
 
-export const PLAYER_JOIN_MAPPING = new Map<ImageAsset, ImageAsset>([
-    [ImageAsset.fork_u, ImageAsset.join_u],
-    [ImageAsset.fork_d, ImageAsset.join_d],
-    [ImageAsset.fork_l, ImageAsset.join_l],
-    [ImageAsset.fork_r, ImageAsset.join_r],
-    [ImageAsset.join_u, ImageAsset.join_u],
-    [ImageAsset.join_d, ImageAsset.join_d],
-    [ImageAsset.join_l, ImageAsset.join_l],
-    [ImageAsset.join_r, ImageAsset.join_r],
-    [ImageAsset.player_u, ImageAsset.join_u],
-    [ImageAsset.player_d, ImageAsset.join_d],
-    [ImageAsset.player_l, ImageAsset.join_l],
-    [ImageAsset.player_r, ImageAsset.join_r],
-]);
-export const PLAYER_FORK_MAPPING = new Map<ImageAsset, ImageAsset>([
-    [ImageAsset.fork_u, ImageAsset.fork_u],
-    [ImageAsset.fork_d, ImageAsset.fork_d],
-    [ImageAsset.fork_l, ImageAsset.fork_l],
-    [ImageAsset.fork_r, ImageAsset.fork_r],
-    [ImageAsset.join_u, ImageAsset.fork_u],
-    [ImageAsset.join_d, ImageAsset.fork_d],
-    [ImageAsset.join_l, ImageAsset.fork_l],
-    [ImageAsset.join_r, ImageAsset.fork_r],
-    [ImageAsset.player_u, ImageAsset.fork_u],
-    [ImageAsset.player_d, ImageAsset.fork_d],
-    [ImageAsset.player_l, ImageAsset.fork_l],
-    [ImageAsset.player_r, ImageAsset.fork_r],
-]);
-export const FORKJOIN_PLAYER_MAPPING = new Map<ImageAsset, ImageAsset>([
-    [ImageAsset.fork_u, ImageAsset.player_u],
-    [ImageAsset.fork_d, ImageAsset.player_d],
-    [ImageAsset.fork_l, ImageAsset.player_l],
-    [ImageAsset.fork_r, ImageAsset.player_r],
-    [ImageAsset.join_u, ImageAsset.player_u],
-    [ImageAsset.join_d, ImageAsset.player_d],
-    [ImageAsset.join_l, ImageAsset.player_l],
-    [ImageAsset.join_r, ImageAsset.player_r],
-    [ImageAsset.player_u, ImageAsset.player_u],
-    [ImageAsset.player_d, ImageAsset.player_d],
-    [ImageAsset.player_l, ImageAsset.player_l],
-    [ImageAsset.player_r, ImageAsset.player_r],
-]);
+export const playerAssetByIndexDirection = (index: number, action: ActionType): ImageAsset => {
+    return `player${index}_${DIRECTION_ASSET.get(action)}.png` as ImageAsset;
+};
 
 export enum SoundAsset {
     fork = "fork.wav",
@@ -110,7 +75,7 @@ export const DIRECTION_DX_DY = new Map<ActionType, number[]>([
     [ActionType.left, [-1, 0]],
     [ActionType.right, [1, 0]],
 ]);
-export const DIRECTION_ASSET = new Map<ActionType, string>([
+const DIRECTION_ASSET = new Map<ActionType, string>([
     [ActionType.up, "u"],
     [ActionType.down, "d"],
     [ActionType.left, "l"],
@@ -122,11 +87,11 @@ export enum LayerId {
     crack, //dynamic
     crate, //dynamic
     target, //static
-    player1 = 10, //dynamic
+    player0 = 10, //dynamic
+    player1, //dynamic
     player2, //dynamic
     player3, //dynamic
-    player4, //dynamic
     wall = 100, //static
 }
 
-export const PLAYER_LAYERS = [LayerId.player1, LayerId.player2, LayerId.player3, LayerId.player4];
+export const PLAYER_LAYERS = [LayerId.player0, LayerId.player1, LayerId.player2, LayerId.player3];

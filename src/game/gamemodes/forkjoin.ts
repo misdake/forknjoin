@@ -1,6 +1,6 @@
 import {ActionNode, PlayerData, PlayerState, StateNode} from "../history";
 import {ActResult, GameMode} from "../gamemode";
-import {ActionType, DIRECTION_ASSET, DIRECTION_DX_DY, ImageAsset, LayerId, PLAYER_LAYERS} from "../enums";
+import {ActionType, DIRECTION_DX_DY, LayerId, PLAYER_LAYERS, playerAssetByIndexDirection} from "../enums";
 import {mapFromDynamic} from "./logicMap";
 import {Util} from "./util";
 
@@ -15,7 +15,7 @@ export class ForkJoinMode extends GameMode {
                 let child1 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
                 let child2 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
                 curr.nextNodes = [child1, child2];
-                curr.nextNode = child1;
+                curr.nextNode = child2;
                 child1.prevNode = curr;
                 child2.prevNode = curr;
                 return {nextNode: curr.nextNode, runTick: true};
@@ -76,7 +76,7 @@ export class ForkJoinMode extends GameMode {
         });
         r.players.sort((a, b) => a.id - b.id);
         r.players.forEach((p, i) => {
-            p.layer = LayerId.player1 + i;
+            p.layer = LayerId.player0 + i;
             p.state = PlayerState.NORMAL;
             if (actionIsLast.get(p.id)) p.state = PlayerState.LAST;
             if (actionMap.get(p.id).action === ActionType.none) p.state = PlayerState.FINISHED;
@@ -97,7 +97,7 @@ export class ForkJoinMode extends GameMode {
                     break;
             }
         });
-        r.players.forEach(p => {
+        r.players.forEach((p, i) => {
             let action = actionMap.get(p.id);
             switch (action.action) {
                 case ActionType.up:
@@ -105,12 +105,11 @@ export class ForkJoinMode extends GameMode {
                 case ActionType.left:
                 case ActionType.right:
                     let [dx, dy] = DIRECTION_DX_DY.get(action.action);
-                    let d = DIRECTION_ASSET.get(action.action);
-                    let asset = `player_${d}.png` as ImageAsset;
-                    p.spriteData.asset = asset;
+                    p.direction = action.action;
                     Util.tryMove(p, dx, dy, r.players, dynamicMap, r.staticData);
                     break;
             }
+            p.spriteData.asset = playerAssetByIndexDirection(i, p.direction);
         });
 
         //join

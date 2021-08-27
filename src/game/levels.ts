@@ -11,7 +11,7 @@ export const w = 8; //wall
 export const o = 9; //empty
 
 export const CELL_IMAGE_MAPPING: ImageAsset[] = [];
-CELL_IMAGE_MAPPING[P] = ImageAsset.player_d;
+CELL_IMAGE_MAPPING[P] = ImageAsset.player0_d;
 CELL_IMAGE_MAPPING[U] = ImageAsset.crate_wood;
 CELL_IMAGE_MAPPING[V] = ImageAsset.crate_metal;
 CELL_IMAGE_MAPPING[X] = ImageAsset.target_wood_1;

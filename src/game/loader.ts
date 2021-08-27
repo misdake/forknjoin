@@ -1,7 +1,7 @@
 import {CELL_IMAGE_MAPPING, Level} from "./levels";
 import {DynamicData, PlayerData, PlayerState, StaticData} from "./history";
 import {H, W} from "../util";
-import {ImageAsset, LayerId} from "./enums";
+import {ActionType, ImageAsset, LayerId} from "./enums";
 import {SpriteData} from "../renderer/sprite";
 import {mapFromStatic} from "./gamemodes/logicMap";
 
@@ -18,10 +18,11 @@ export function loadLevelToData(level: Level): { dynamicData: DynamicData, stati
             if (image) {
                 let sprite = SpriteData.create(i, j, image);
                 switch (image) {
-                    case ImageAsset.player_d: {
+                    case ImageAsset.player0_d: {
                         let p = new PlayerData();
                         p.id = players.length + 1;
-                        p.layer = LayerId.player1 + players.length;
+                        p.layer = LayerId.player0 + players.length;
+                        p.direction = ActionType.down;
                         p.state = PlayerState.LAST;
                         p.spriteData = sprite;
                         players.push(p);

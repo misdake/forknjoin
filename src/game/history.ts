@@ -92,6 +92,7 @@ export class PlayerData {
     id: number;
 
     layer: LayerId;
+    direction: ActionType;
     state: PlayerState;
     action: ActionNode;
 
@@ -104,6 +105,7 @@ export class PlayerData {
         let r = new PlayerData();
         r.id = this.id;
         r.layer = this.layer;
+        r.direction = this.direction;
         r.state = this.state;
         r.action = this.action;
         r.spriteData = this.spriteData.clone();
