@@ -60,6 +60,7 @@ export enum ActionType {
     left,
     right,
     idle,
+    join,
     fork,
 
     //these take effects immediately

@@ -1,8 +1,8 @@
-import {ActionNode, PlayerData, PlayerState, StateNode} from "../history";
-import {ActResult, GameMode} from "../gamemode";
-import {ActionType, DIRECTION_DX_DY, LayerId, PLAYER_LAYERS, playerAssetByIndexDirection} from "../enums";
-import {mapFromDynamic} from "./logicMap";
-import {Util} from "./util";
+import { ActionNode, PlayerData, PlayerState, StateNode } from "../history";
+import { ActResult, GameMode } from "../gamemode";
+import { ActionType, DIRECTION_DX_DY, LayerId, PLAYER_LAYERS, playerAssetByIndexDirection } from "../enums";
+import { mapFromDynamic } from "./logicMap";
+import { Util } from "./util";
 
 export class ForkJoinMode extends GameMode {
     static readonly instance = new ForkJoinMode();
@@ -11,7 +11,8 @@ export class ForkJoinMode extends GameMode {
 
     act(inputAction: ActionType, curr: ActionNode, roots: ActionNode[]): ActResult {
         switch (inputAction) {
-            case ActionType.fork:
+
+            case ActionType.fork: {
                 let child1 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
                 let child2 = new ActionNode(curr.time + 1, ++ForkJoinMode.next_id, inputAction, curr);
                 curr.nextNodes = [child1, child2];
@@ -19,12 +20,20 @@ export class ForkJoinMode extends GameMode {
                 child1.prevNode = curr;
                 child2.prevNode = curr;
                 return {nextNode: curr.nextNode, runTick: true};
-
-            case ActionType.switch:
+            }
+            case ActionType.join: {
+                super.act(inputAction, curr, roots);
                 //find next player
                 let actions = ForkJoinMode.findActions(curr.time, roots);
                 let next = ForkJoinMode.findNextPlayer(curr, actions);
                 return {nextNode: next, runTick: false};
+            }
+            case ActionType.switch: {
+                //find next player
+                let actions = ForkJoinMode.findActions(curr.time, roots);
+                let next = ForkJoinMode.findNextPlayer(curr, actions);
+                return {nextNode: next, runTick: false};
+            }
 
             default:
                 return super.act(inputAction, curr, roots);
@@ -34,9 +43,10 @@ export class ForkJoinMode extends GameMode {
     private static findActions(time: number, roots: ActionNode[]): ActionNode[] {
         let r: ActionNode[] = [];
         ActionNode.visitAllChildren(roots, node => {
+            if (node.action === ActionType.join) return false;
             if (node.time === time) {
                 r.push(node);
-            } else if (node.time < time && !node.nextNode) {
+            } else if (node.time < time && (!node.nextNode || node.nextNode.action === ActionType.join)) {
                 r.push(node);
             }
             return node.time <= time;
@@ -46,7 +56,11 @@ export class ForkJoinMode extends GameMode {
     private static findNextPlayer(curr: ActionNode, actions: ActionNode[]): ActionNode {
         let index = actions.indexOf(curr);
         if (index < 0) debugger;
-        let nextIndex = (index + 1) % actions.length;
+        let nextIndex = index;
+        do {
+            nextIndex = (index + 1) % actions.length;
+            if (nextIndex === index) debugger;
+        } while (actions[nextIndex].action !== ActionType.join);
         return actions[nextIndex];
     }
 
@@ -115,8 +129,18 @@ export class ForkJoinMode extends GameMode {
         //join
         // r.players
         //TODO check last/none state, 0~n-1 x i+1~n-1,
-        let finished = r.players.filter(p => p.state === PlayerState.FINISHED || (p.action !== curr && p.state === PlayerState.LAST));
-        // let finished = r.players.filter(p => p.state === PlayerState.NORMAL);
+        let finished = r.players.filter(p => p.state === PlayerState.FINISHED || (p.action.prevNode !== curr && p.state === PlayerState.LAST));
+        let valid = r.players.filter(p => p.state === PlayerState.NORMAL || p.action.prevNode === curr);
+
+        console.log("try join: finished", finished);
+        console.log("try join: valid", valid);
+        for (let from of valid) {
+            for (let to of finished) {
+                if (from.spriteData.x === to.spriteData.x && from.spriteData.y === to.spriteData.y) {
+                    console.log("join?", from, to);
+                }
+            }
+        }
 
         console.log("tick", actions, prev, r);
         return r;

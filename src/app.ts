@@ -60,8 +60,9 @@ if (isTouchDevice()) {
             case 'd': action = ActionType.right; break;
             case ' ': action = ActionType.idle; break;
 
-            case 'j': action = ActionType.switch; break;
+            case 'j': action = ActionType.join; break;
             case 'k': action = ActionType.fork; break;
+            case 'l': action = ActionType.switch; break;
 
             case 'z': action = ActionType.undo; break;
             case 'x': action = ActionType.redo; break;
