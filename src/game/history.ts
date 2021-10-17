@@ -84,7 +84,6 @@ export class ActionNode {
 
 export enum PlayerState {
     NORMAL = 1,
-    LAST,
     FINISHED,
 }
 

@@ -22,17 +22,27 @@ export class ForkJoinMode extends GameMode {
                 return {nextNode: curr.nextNode, runTick: true};
             }
             case ActionType.join: {
-                super.act(inputAction, curr, roots);
                 //find next player
                 let actions = ForkJoinMode.findActions(curr.time, roots);
                 let next = ForkJoinMode.findNextPlayer(curr, actions);
-                return {nextNode: next, runTick: false};
+                if (next) {
+                    super.act(inputAction, curr, roots);
+                    return {nextNode: next, runTick: false};
+                } else {
+                    console.log("cannot find another");
+                    return {nextNode: curr, runTick: false};
+                }
             }
             case ActionType.switch: {
                 //find next player
                 let actions = ForkJoinMode.findActions(curr.time, roots);
                 let next = ForkJoinMode.findNextPlayer(curr, actions);
-                return {nextNode: next, runTick: false};
+                if (next) {
+                    return {nextNode: next, runTick: false};
+                } else {
+                    console.log("cannot find another");
+                    return {nextNode: curr, runTick: false};
+                }
             }
 
             default:
@@ -44,9 +54,7 @@ export class ForkJoinMode extends GameMode {
         let r: ActionNode[] = [];
         ActionNode.visitAllChildren(roots, node => {
             if (node.action === ActionType.join) return false;
-            if (node.time === time) {
-                r.push(node);
-            } else if (node.time < time && (!node.nextNode || node.nextNode.action === ActionType.join)) {
+            if (node.time <= time) {
                 r.push(node);
             }
             return node.time <= time;
@@ -59,14 +67,17 @@ export class ForkJoinMode extends GameMode {
         let nextIndex = index;
         do {
             nextIndex = (index + 1) % actions.length;
-            if (nextIndex === index) debugger;
-        } while (actions[nextIndex].action !== ActionType.join);
+            if (nextIndex === index) {
+                debugger;
+                return null;
+            }
+        } while (actions[nextIndex].action === ActionType.join);
         return actions[nextIndex];
     }
 
     tick(actions: ActionNode[], prev: StateNode, curr: ActionNode): StateNode {
         let actionMap = new Map<number, ActionNode>(actions.map(v => [v.id, v]));
-        let actionIsLast = new Map<number, boolean>(actions.map(v => [v.id, !v.nextNode]));
+        let actionFinished = new Map<number, boolean>(actions.map(v => [v.id, v.action == ActionType.join]));
 
         let prevPlayers = new Map<number, PlayerData>(prev.players.map(p => [p.id, p]));
         let forkActions = actions.filter(v => v.action === ActionType.fork && prevPlayers.has(v.prevNode.id));
@@ -92,8 +103,7 @@ export class ForkJoinMode extends GameMode {
         r.players.forEach((p, i) => {
             p.layer = LayerId.player0 + i;
             p.state = PlayerState.NORMAL;
-            if (actionIsLast.get(p.id)) p.state = PlayerState.LAST;
-            if (actionMap.get(p.id).action === ActionType.none) p.state = PlayerState.FINISHED;
+            if (actionFinished.get(p.id)) p.state = PlayerState.FINISHED;
         });
         if (r.players.length > PLAYER_LAYERS.length) debugger;
 
@@ -129,7 +139,7 @@ export class ForkJoinMode extends GameMode {
         //join
         // r.players
         //TODO check last/none state, 0~n-1 x i+1~n-1,
-        let finished = r.players.filter(p => p.state === PlayerState.FINISHED || (p.action.prevNode !== curr && p.state === PlayerState.LAST));
+        let finished = r.players.filter(p => p.state === PlayerState.FINISHED);
         let valid = r.players.filter(p => p.state === PlayerState.NORMAL || p.action.prevNode === curr);
 
         console.log("try join: finished", finished);
